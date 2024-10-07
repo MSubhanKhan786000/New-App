@@ -57,7 +57,7 @@ const Detail = () => {
   };
 
   if (!detail) {
-    return <div className="text-center text-xl">Loading product details...</div>; 
+    return <div className="text-center text-xl">Loading product details...</div>;
   }
 
   return (
@@ -119,7 +119,7 @@ const Detail = () => {
                         Add To Cart
                       </button>
                     </div>
-                    <p className="text-gray-700 text-sm mb-4">{detail.description}</p> 
+                    <p className="text-gray-700 text-sm mb-4">{detail.description}</p> {/* Adjusted text size */}
                   </MDBCol>
                 </MDBRow>
               </MDBCardBody>
