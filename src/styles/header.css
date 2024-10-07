@@ -1,0 +1,13 @@
+.button {
+    margin-left: 10px;
+    background-color: #dc3545 !important;
+    color: white !important;
+    border: 2px solid #dc3545 !important;
+  }
+  
+  .button:hover {
+    background-color: #fcedee !important;
+    color: #dc3545 !important;
+    border: 1px solid #dc3545 !important;
+  }
+  
