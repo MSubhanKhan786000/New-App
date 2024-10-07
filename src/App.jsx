@@ -1,3 +1,4 @@
+// App.jsx
 import "./App.css";
 import Layout from "./components/layout";
 import Home from "./pages/home";
@@ -25,7 +26,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="/:slug" element={<Detail />} />
+            <Route path="/detail/:id" element={<Detail />} /> {/* Update the path to use ID */}
             <Route path="/Earn" element={<Earn />} />
             <Route path="/Contact" element={<Contact />} />
             <Route path="/About" element={<About />} />

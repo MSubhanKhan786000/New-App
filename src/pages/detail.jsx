@@ -1,75 +1,133 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { products } from "../products";
+import { useParams, useNavigate } from "react-router-dom"; 
+import { fetchProductById } from "../services/productService"; 
 import { useDispatch } from "react-redux";
 import { addToCart } from "../store/cart";
+import { MdOutlineKeyboardBackspace } from "react-icons/md"; 
+import {
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBCard,
+  MDBCardBody,
+} from "mdb-react-ui-kit"; 
+import RatingComponent from "../components/rating";
 
 const Detail = () => {
-  const { slug } = useParams();
-  const [detail, setDetail] = useState([]);
+  const { id } = useParams(); 
+  const [detail, setDetail] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const findDetail = products.filter(product => product.slug === slug);
-    if (findDetail.length > 0) {
-      setDetail(findDetail[0]);
-    } else {
-      window.location.href = "/";
-    }
-  }, [slug]);
+    const getProductDetails = async () => {
+      try {
+        const response = await fetchProductById(id);
+        setDetail(response.data);
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+        navigate("/"); 
+      }
+    };
+    getProductDetails();
+  }, [id, navigate]); 
+
   const handleMinusQuantity = () => {
     setQuantity(quantity - 1 < 1 ? 1 : quantity - 1);
   };
+
   const handlePlusQuantity = () => {
     setQuantity(quantity + 1);
   };
+
   const handleAddToCart = () => {
-    dispatch(
-      addToCart({
-        productId: detail.id,
-        quantity: quantity,
-      })
-    );
+    if (detail) {
+      dispatch(
+        addToCart({
+          productId: detail._id,
+          quantity: quantity,
+        })
+      );
+    }
   };
+
+  const handleBack = () => {
+    navigate("/");
+  };
+
+  if (!detail) {
+    return <div className="text-center text-xl">Loading product details...</div>; 
+  }
+
   return (
-    <div>
-      <h2 className="text-3xl text-center">PRODUCT DETAIL</h2>
-      <div className="grid grid-cols-2 gap-5 mt-5">
-        <div>
-          <img src={detail.image} alt="" className="w-full" />
-        </div>
-        <div className="flex flex-col gap-5">
-          <h1 className="text-4xl uppercase font-bold">{detail.name}</h1>
-          <p className="font-bold text-3xl">${detail.price}</p>
-          <div className="flex gap-5">
-            <div className="flex gap-2 justify-center items-center">
-              <button
-                className="bg-gray-100 h-full w-10 font-bold text-xl rounded-xl flex justify-center items-center"
-                onClick={handleMinusQuantity}
-              >
-                -
-              </button>
-              <span className="bg-gray-200 h-full w-10 font-bold text-xl rounded-xl flex justify-center items-center">
-                {quantity}
-              </span>
-              <button
-                className="bg-gray-100 h-full w-10 font-bold text-xl rounded-xl flex justify-center items-center"
-                onClick={handlePlusQuantity}
-              >
-                +
-              </button>
-            </div>
-            <button
-              className="bg-slate-900 text-white px-7 py-3 rounded-xl shadow-2xl"
-              onClick={handleAddToCart}
-            >
-              Add To Cart
-            </button>
-          </div>
-          <p>{detail.description}</p>
-        </div>
-      </div>
-    </div>
+    <section
+      className="min-h-screen h-custom"
+      style={{ backgroundColor: "#fcedee" }}
+    >
+      <MDBContainer className="py-5 h-100">
+        <MDBRow className="justify-content-center align-items-center h-100">
+          <MDBCol>
+            <MDBCard>
+              <MDBCardBody className="p-4">
+                <div className="text-body">
+                  <button onClick={handleBack} className="mr-5">
+                    <MdOutlineKeyboardBackspace className="text-2xl text-gray-600 hover:text-gray-800" />
+                  </button>
+                  <p style={{fontSize:"18px",fontWeight:"bold",color:"grey",textAlign:"center", marginTop:"-30px"}}>PRODUCT DETAILS</p>
+                </div>
+                <hr />
+
+                <MDBRow className="mt-5">
+                  <MDBCol lg="6" className="flex justify-center">
+                    <img
+                      src={detail.image}
+                      alt={detail.name}
+                      className="w-[500px] rounded-lg shadow-lg"
+                    />
+                  </MDBCol>
+                  <MDBCol lg="6" className="flex flex-col justify-between p-4 bg-white rounded-lg shadow-md">
+                    <div style={{display:"flex",alignItems:"center", justifyContent:"space-between"}}>
+                    <h3 className="text-4xl uppercase font-bold mb-3">{detail.name}</h3>
+                    <RatingComponent  />
+                    </div>
+                    <p className="font-bold text-3xl text-green-600 mb-4">
+                      ${detail.buyPrice || detail.rentPrice}
+                    </p>
+                    <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
+                      <div className="flex gap-2 items-center">
+                        <button
+                          className="bg-gray-200 h-8 w-8 font-bold text-lg rounded-lg flex justify-center items-center transition duration-300 hover:bg-gray-300"
+                          onClick={handleMinusQuantity}
+                        >
+                          -
+                        </button>
+                        <span className="bg-gray-100 h-8 w-8 font-bold text-lg rounded-lg flex justify-center items-center">
+                          {quantity}
+                        </span>
+                        <button
+                          className="bg-gray-200 h-8 w-8 font-bold text-lg rounded-lg flex justify-center items-center transition duration-300 hover:bg-gray-300"
+                          onClick={handlePlusQuantity}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button
+                        className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg transition duration-300 hover:bg-slate-800 md:ml-4 mt-2 md:mt-0"
+                        onClick={handleAddToCart}
+                      >
+                        Add To Cart
+                      </button>
+                    </div>
+                    <p className="text-gray-700 text-sm mb-4">{detail.description}</p> 
+                  </MDBCol>
+                </MDBRow>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
+    </section>
   );
 };
 

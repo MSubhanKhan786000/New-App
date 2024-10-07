@@ -18,7 +18,7 @@ import profileIcon from "../assets/images/profile.png";
 import logoutIcon from "../assets/images/logout.png";
 import { HiOutlineLogout } from "react-icons/hi";
 import { TiShoppingCart } from "react-icons/ti";
-
+import '../styles/header.css'
 const Header = () => {
   const pages = ["Women", "Men", "Products", "About", "Contact"];
 
@@ -102,7 +102,7 @@ const Header = () => {
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: "block", md: "none" } }}
             >
-              {pages.map(page => (
+              {pages?.map(page => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Link
                     to={`/${page.toLowerCase().replace(" ", "")}`}
@@ -148,7 +148,7 @@ const Header = () => {
               justifyContent: "center",
             }}
           >
-            {pages.map(page => {
+            {pages?.map(page => {
               const pagePath = `/${page.toLowerCase().replace(" ", "")}`;
               const isActive = location.pathname === pagePath;
 
@@ -174,20 +174,9 @@ const Header = () => {
             })}
 
             <Button
+            className="button"
               onClick={handleEarnWithUsClick}
-              sx={{
-                marginLeft: "10px",
-                height: "36px !important",
-                width: "120px !important",
-                backgroundColor: "#dc3545 !important", // Initial background color
-                color: "white !important", // Initial text color
-                border: "2px solid #dc3545 !important", // Initial border color
-                "&:hover": {
-                  backgroundColor: "#fcedee !important", // Change background on hover
-                  color: "#dc3545 !important", // Text color on hover
-                  border: "1px solid #dc3545 !important", // Same border on hover
-                },
-              }}
+              
             >
               Earn with us
             </Button>

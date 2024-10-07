@@ -27,17 +27,16 @@ export const handleRegister = async (
       setModalType("success");
       if (!modalAlreadyShown) {
         modalAlreadyShown = true;
-        setShowModal(true); // Open the modal on success
+        setShowModal(true); 
       }
     } else {
-      // Handle unexpected responses
       setModalMessage(
         "Registration failed: " + (response.data.message || "Unknown error")
       );
       setModalType("error");
       if (!modalAlreadyShown) {
         modalAlreadyShown = true;
-        setShowModal(true); // Open the modal on error
+        setShowModal(true);
       }
     }
   } catch (error) {
@@ -49,14 +48,14 @@ export const handleRegister = async (
         setModalType("error");
         if (!modalAlreadyShown) {
           modalAlreadyShown = true;
-          setShowModal(true); // Open the modal on error
+          setShowModal(true); 
         }
       } else {
         setModalMessage("An error occurred during registration");
         setModalType("error");
         if (!modalAlreadyShown) {
           modalAlreadyShown = true;
-          setShowModal(true); // Open the modal on error
+          setShowModal(true); 
         }
       }
     } else {
@@ -64,7 +63,7 @@ export const handleRegister = async (
       setModalType("error");
       if (!modalAlreadyShown) {
         modalAlreadyShown = true;
-        setShowModal(true); // Open the modal on error
+        setShowModal(true);
       }
     }
   } finally {

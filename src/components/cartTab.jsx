@@ -19,16 +19,18 @@ import { toast } from "react-toastify";
 import { MdDeleteOutline } from "react-icons/md";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
-export default function Basic() {
+export default function CartTab() {
   const cartItems = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Calculate the total price based on the products in the cart
   const totalPrice = cartItems.reduce((total, cartItem) => {
     const product = products.find(p => p.id === cartItem.productId);
     return total + (product ? product.price * cartItem.quantity : 0);
   }, 0);
 
+  // Handle deletion of a product from the cart
   const handleDelete = productId => {
     dispatch(changeQuantity({ productId, quantity: 0 }));
     toast.success("Item deleted from cart");
@@ -45,17 +47,17 @@ export default function Basic() {
             <MDBCard>
               <MDBCardBody className="p-4">
                 <MDBRow>
+                  {/* Left Column for cart items */}
                   <MDBCol lg="7">
                     <MDBTypography tag="h5">
                       <a
                         href="#!"
                         className="text-body"
-                        onClick={() => navigate(-1)} // Go to the previous page
+                        onClick={() => navigate(-1)}
                         style={{
                           display: "flex",
                           flexDirection: "row",
                           alignItems: "center",
-                          // justifyContent: "space-between",
                         }}
                       >
                         <MdOutlineKeyboardBackspace
@@ -76,7 +78,7 @@ export default function Basic() {
                       </div>
                     </div>
 
-                    {cartItems.map((cartItem, index) => {
+                    {cartItems?.map((cartItem, index) => {
                       const product = products.find(
                         p => p.id === cartItem.productId
                       );
@@ -109,6 +111,7 @@ export default function Basic() {
                                 </div>
                               </div>
                               <div className="d-flex flex-row align-items-center">
+                                {/* Quantity Display */}
                                 <div style={{ width: "50px" }}>
                                   <MDBTypography
                                     tag="h5"
@@ -117,11 +120,13 @@ export default function Basic() {
                                     {cartItem.quantity}
                                   </MDBTypography>
                                 </div>
+                                {/* Product Price */}
                                 <div style={{ width: "80px" }}>
                                   <MDBTypography tag="h5" className="mb-0">
                                     ${product.price * cartItem.quantity}
                                   </MDBTypography>
                                 </div>
+                                {/* Delete Icon */}
                                 <a
                                   href="#!"
                                   onClick={() =>
@@ -139,6 +144,7 @@ export default function Basic() {
                     })}
                   </MDBCol>
 
+                  {/* Right Column for order summary and payment form */}
                   <MDBCol lg="5">
                     <MDBCard
                       className="text-white rounded-3"
@@ -152,6 +158,7 @@ export default function Basic() {
                         </div>
 
                         <form className="mt-4">
+                          {/* Cardholder's Name */}
                           <MDBInput
                             className="mb-4"
                             label="Cardholder's Name"
@@ -161,6 +168,7 @@ export default function Basic() {
                             contrast
                           />
 
+                          {/* Card Number */}
                           <MDBInput
                             className="mb-4"
                             label="Card Number"
@@ -172,6 +180,7 @@ export default function Basic() {
                             contrast
                           />
 
+                          {/* Expiration and CVV */}
                           <MDBRow className="mb-4">
                             <MDBCol md="6">
                               <MDBInput
@@ -202,6 +211,7 @@ export default function Basic() {
 
                         <hr />
 
+                        {/* Subtotal, Shipping, and Total Prices */}
                         <div className="d-flex justify-content-between">
                           <p className="mb-2">Subtotal</p>
                           <p className="mb-2">${totalPrice}</p>
@@ -214,12 +224,13 @@ export default function Basic() {
 
                         <div className="d-flex justify-content-between">
                           <p className="mb-2">Total (Incl. taxes)</p>
-                          <p className="mb-2">${totalPrice}</p>
+                          <p className="mb-2">${totalPrice + 20}</p>
                         </div>
 
+                        {/* Checkout Button */}
                         <MDBBtn color="secondary" block size="lg">
                           <div className="d-flex justify-content-between">
-                            <span>${totalPrice}</span>
+                            <span>${totalPrice + 20}</span>
                             <span>
                               Checkout
                               <i className="fas fa-long-arrow-alt-right ms-2"></i>
