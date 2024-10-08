@@ -5,7 +5,6 @@ import {
   MDBCardImage,
   MDBCol,
   MDBContainer,
-  MDBIcon,
   MDBInput,
   MDBRow,
   MDBTypography,
@@ -13,32 +12,29 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { products } from "../products";
+import { products } from "../products"; // Assuming products is an array of product objects
 import { changeQuantity } from "../store/cart";
 import { toast } from "react-toastify";
 import { MdDeleteOutline } from "react-icons/md";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
 export default function Basic() {
-  const cartItems = useSelector(state => state.cart.items);
+  const cartItems = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const totalPrice = cartItems.reduce((total, cartItem) => {
-    const product = products.find(p => p.id === cartItem.productId);
-    return total + (product ? product.price * cartItem.quantity : 0);
+    const product = products.find((p) => p.id === cartItem.productId);
+    return total + (product ? (product.buyPrice || 0) * cartItem.quantity : 0);
   }, 0);
 
-  const handleDelete = productId => {
+  const handleDelete = (productId) => {
     dispatch(changeQuantity({ productId, quantity: 0 }));
     toast.success("Item deleted from cart");
   };
 
   return (
-    <section
-      className="min-h-screen h-custom"
-      style={{ backgroundColor: "#fcedee" }}
-    >
+    <section className="min-h-screen h-custom" style={{ backgroundColor: "#fcedee" }}>
       <MDBContainer className="py-5 h-100">
         <MDBRow className="justify-content-center align-items-center h-100">
           <MDBCol>
@@ -50,17 +46,14 @@ export default function Basic() {
                       <a
                         href="#!"
                         className="text-body"
-                        onClick={() => navigate(-1)} // Go to the previous page
+                        onClick={() => navigate(-1)}
                         style={{
                           display: "flex",
                           flexDirection: "row",
                           alignItems: "center",
-                          // justifyContent: "space-between",
                         }}
                       >
-                        <MdOutlineKeyboardBackspace
-                          style={{ marginRight: "5px" }}
-                        />
+                        <MdOutlineKeyboardBackspace style={{ marginRight: "5px" }} />
                         Continue shopping
                       </a>
                     </MDBTypography>
@@ -70,65 +63,51 @@ export default function Basic() {
                     <div className="d-flex justify-content-between align-items-center mb-4">
                       <div>
                         <p className="mb-1">Shopping cart</p>
-                        <p className="mb-0">
-                          You have {cartItems.length} items in your cart
-                        </p>
+                        <p className="mb-0">You have {cartItems.length} items in your cart</p>
                       </div>
                     </div>
 
-                    {cartItems.map((cartItem, index) => {
-                      const product = products.find(
-                        p => p.id === cartItem.productId
-                      );
-                      if (!product) return null;
+                    {cartItems.map((cartItem) => {
+                      
+
+                      const {
+                        name = "null",
+                        description = "null",
+                        image = "null",
+                        rentPrice = 0, // Default to 0 if not found
+                      } = cartItem;
 
                       return (
-                        <MDBCard className="mb-3" key={index}>
+                        <MDBCard className="mb-3" key={cartItem.productId}>
                           <MDBCardBody>
                             <div className="d-flex justify-content-between">
                               <div className="d-flex flex-row align-items-center">
-                                <div>
-                                  <MDBCardImage
-                                    src={product.image}
-                                    fluid
-                                    className="rounded-3"
-                                    style={{ width: "120px" }}
-                                    alt={product.name}
-                                  />
-                                </div>
+                                <MDBCardImage
+                                  src={image}
+                                  fluid
+                                  className="rounded-3"
+                                  style={{ width: "120px" }}
+                                  alt={name}
+                                />
                                 <div className="ms-3">
-                                  <MDBTypography tag="h5">
-                                    {product.name}
-                                  </MDBTypography>
-                                  <p
-                                    className="small text-muted mb-0"
-                                    style={{ fontSize: "12px" }}
-                                  >
-                                    {product.description.substring(0, 30)}
+                                  <MDBTypography tag="h5">{name}</MDBTypography>
+                                  <p className="small text-muted mb-0" style={{ fontSize: "12px" }}>
+                                    {description.substring(0, 30)}
                                   </p>
                                 </div>
                               </div>
                               <div className="d-flex flex-row align-items-center">
                                 <div style={{ width: "50px" }}>
-                                  <MDBTypography
-                                    tag="h5"
-                                    className="fw-normal mb-0"
-                                  >
+                                  <MDBTypography tag="h5" className="fw-normal mb-0">
                                     {cartItem.quantity}
                                   </MDBTypography>
                                 </div>
                                 <div style={{ width: "80px" }}>
                                   <MDBTypography tag="h5" className="mb-0">
-                                    ${product.price * cartItem.quantity}
+                                    ${(rentPrice * cartItem.quantity).toFixed(2)}
                                   </MDBTypography>
                                 </div>
-                                <a
-                                  href="#!"
-                                  onClick={() =>
-                                    handleDelete(cartItem.productId)
-                                  }
-                                  style={{ color: "#cecece" }}
-                                >
+                                <a href="#!" onClick={() => handleDelete(cartItem.productId)} style={{ color: "#cecece" }}>
                                   <MdDeleteOutline />
                                 </a>
                               </div>
@@ -140,15 +119,10 @@ export default function Basic() {
                   </MDBCol>
 
                   <MDBCol lg="5">
-                    <MDBCard
-                      className="text-white rounded-3"
-                      style={{ backgroundColor: "#dc2626" }} // Red-600 color
-                    >
+                    <MDBCard className="text-white rounded-3" style={{ backgroundColor: "#dc2626" }}>
                       <MDBCardBody>
                         <div className="d-flex justify-content-between align-items-center mb-4">
-                          <MDBTypography tag="h5" className="mb-0">
-                            Card details
-                          </MDBTypography>
+                          <MDBTypography tag="h5" className="mb-0">Card details</MDBTypography>
                         </div>
 
                         <form className="mt-4">
@@ -160,7 +134,6 @@ export default function Basic() {
                             placeholder="Cardholder's Name"
                             contrast
                           />
-
                           <MDBInput
                             className="mb-4"
                             label="Card Number"
@@ -171,7 +144,6 @@ export default function Basic() {
                             placeholder="1234 5678 9012 3457"
                             contrast
                           />
-
                           <MDBRow className="mb-4">
                             <MDBCol md="6">
                               <MDBInput
@@ -204,26 +176,21 @@ export default function Basic() {
 
                         <div className="d-flex justify-content-between">
                           <p className="mb-2">Subtotal</p>
-                          <p className="mb-2">${totalPrice}</p>
+                          <p className="mb-2">${totalPrice.toFixed(2)}</p>
                         </div>
-
                         <div className="d-flex justify-content-between">
                           <p className="mb-2">Shipping</p>
                           <p className="mb-2">$20.00</p>
                         </div>
-
                         <div className="d-flex justify-content-between">
                           <p className="mb-2">Total (Incl. taxes)</p>
-                          <p className="mb-2">${totalPrice}</p>
+                          <p className="mb-2">${(totalPrice + 20).toFixed(2)}</p>
                         </div>
 
                         <MDBBtn color="secondary" block size="lg">
                           <div className="d-flex justify-content-between">
-                            <span>${totalPrice}</span>
-                            <span>
-                              Checkout
-                              <i className="fas fa-long-arrow-alt-right ms-2"></i>
-                            </span>
+                            <span>${(totalPrice + 20).toFixed(2)}</span>
+                            <span>Checkout<i className="fas fa-long-arrow-alt-right ms-2"></i></span>
                           </div>
                         </MDBBtn>
                       </MDBCardBody>

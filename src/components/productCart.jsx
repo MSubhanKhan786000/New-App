@@ -1,4 +1,3 @@
-// productCart.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import iconCart from "../assets/images/iconCart.png";
@@ -7,19 +6,44 @@ import { addToCart } from "../store/cart";
 
 const ProductCart = (props) => {
   const carts = useSelector((store) => store.cart.items);
-  const { _id, name, buyPrice, rentPrice, image } = props.data; // Removed slug from here
   const dispatch = useDispatch();
+  const { _id, name, buyPrice, rentPrice, image, buyStatus, rentStatus, category, createdAt, description, status, type } = props.data;
 
   const handleAddToCart = () => {
+    console.log("Product being added to cart:", {
+      _id,
+      name,
+      buyPrice,
+      rentPrice,
+      image,
+      buyStatus,
+      rentStatus,
+      category,
+      createdAt,
+      description,
+      status,
+      type
+    });
+
     dispatch(
       addToCart({
-        productId: _id,
-        quantity: 1,
+        _id,
+        name,
+        buyPrice,
+        rentPrice,
+        image,
+        buyStatus,
+        rentStatus,
+        category,
+        createdAt,
+        description,
+        status,
+        type
       })
     );
   };
 
-  // Store product ID in local storage on click
+  // Store product ID in local storage on click (for product details page)
   const handleProductClick = () => {
     localStorage.setItem("selectedProductId", _id);
   };

@@ -15,7 +15,8 @@ import RatingComponent from "../components/rating";
 
 const Detail = () => {
   const { id } = useParams(); 
-  const [detail, setDetail] = useState(null);
+  const [detail, setDetail] = useState([]);
+
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,7 +25,8 @@ const Detail = () => {
     const getProductDetails = async () => {
       try {
         const response = await fetchProductById(id);
-        setDetail(response.data);
+        
+        setDetail(response);
       } catch (error) {
         console.error("Error fetching product details:", error);
         navigate("/"); 

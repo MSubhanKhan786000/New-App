@@ -7,6 +7,5 @@ export const fetchProducts = async () => {
 
 export const fetchProductById = async (id) => {
   const response = await axiosInstance.get(`/getCollection/${id}`)
-   console.log(response);
-   return response;
+   return response.data;
 }
