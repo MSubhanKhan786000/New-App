@@ -13,13 +13,16 @@ const cartSlice = createSlice({
   reducers: {
     addToCart(state, action) {
       const product = action.payload;
-      console.log("222222222222222222222",product);
-      
-      const indexProductId = state.items.findIndex(
+
+      const existingItemIndex = state.items.findIndex(
         (item) => item.productId === product._id
       );
 
-      console.log("index",indexProductId);
+      if (existingItemIndex >= 0) {
+        // Increase the quantity if the product already exists
+        state.items[existingItemIndex].quantity += 1;
+      } else {
+        // Add the product to the cart with quantity 1
         state.items.push({
           productId: product._id,
           name: product.name,
@@ -35,25 +38,26 @@ const cartSlice = createSlice({
           type: product.type,
           quantity: 1, // Start with a default quantity of 1
         });
-      // }
+      }
 
-      // Store the complete product data in localStorage
+      // Store the updated cart in localStorage
       localStorage.setItem("carts", JSON.stringify(state.items));
     },
 
     changeQuantity(state, action) {
       const { productId, quantity } = action.payload;
-      const indexProductId = state.items.findIndex(
+      const existingItemIndex = state.items.findIndex(
         (item) => item.productId === productId
       );
 
       if (quantity > 0) {
-        state.items[indexProductId].quantity = quantity;
+        state.items[existingItemIndex].quantity = quantity;
       } else {
+        // Remove the product from the cart when quantity is 0
         state.items = state.items.filter((item) => item.productId !== productId);
       }
 
-      // Update localStorage with full product data
+      // Update localStorage with the new cart state
       localStorage.setItem("carts", JSON.stringify(state.items));
     },
 

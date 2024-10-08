@@ -12,7 +12,6 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { products } from "../products"; // Assuming products is an array of product objects
 import { changeQuantity } from "../store/cart";
 import { toast } from "react-toastify";
 import { MdDeleteOutline } from "react-icons/md";
@@ -23,14 +22,22 @@ export default function Basic() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Calculate the total price based on the quantity and buyPrice of each item
   const totalPrice = cartItems.reduce((total, cartItem) => {
-    const product = products.find((p) => p.id === cartItem.productId);
-    return total + (product ? (product.buyPrice || 0) * cartItem.quantity : 0);
+    return total + (cartItem.buyPrice * cartItem.quantity);
   }, 0);
 
+  // Handle deleting an item (reduce quantity by 1 or remove it if the quantity is 0)
   const handleDelete = (productId) => {
-    dispatch(changeQuantity({ productId, quantity: 0 }));
-    toast.success("Item deleted from cart");
+    const item = cartItems.find((cartItem) => cartItem.productId === productId);
+    if (item.quantity > 1) {
+      // Reduce quantity by 1 if more than 1 item exists
+      dispatch(changeQuantity({ productId, quantity: item.quantity - 1 }));
+    } else {
+      // Remove the item if only 1 exists
+      dispatch(changeQuantity({ productId, quantity: 0 }));
+    }
+    toast.success("Cart Item deleted successfully");
   };
 
   return (
@@ -63,19 +70,12 @@ export default function Basic() {
                     <div className="d-flex justify-content-between align-items-center mb-4">
                       <div>
                         <p className="mb-1">Shopping cart</p>
-                        <p className="mb-0">You have {cartItems.length} items in your cart</p>
+                        <p className="mb-0">You have {cartItems.length}  items in your cart</p>
                       </div>
                     </div>
 
                     {cartItems.map((cartItem) => {
-                      
-
-                      const {
-                        name = "null",
-                        description = "null",
-                        image = "null",
-                        rentPrice = 0, // Default to 0 if not found
-                      } = cartItem;
+                      const { name, description, image, buyPrice } = cartItem;
 
                       return (
                         <MDBCard className="mb-3" key={cartItem.productId}>
@@ -104,7 +104,7 @@ export default function Basic() {
                                 </div>
                                 <div style={{ width: "80px" }}>
                                   <MDBTypography tag="h5" className="mb-0">
-                                    ${(rentPrice * cartItem.quantity).toFixed(2)}
+                                    ${(buyPrice * cartItem.quantity).toFixed(2)}
                                   </MDBTypography>
                                 </div>
                                 <a href="#!" onClick={() => handleDelete(cartItem.productId)} style={{ color: "#cecece" }}>
