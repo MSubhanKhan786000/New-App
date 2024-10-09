@@ -15,6 +15,10 @@ import Products from "./pages/products";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import CartTab from "./components/cartTab";
 import { ToastContainer } from "react-toastify";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+
 
 const queryClient = new QueryClient();
 

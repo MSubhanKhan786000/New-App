@@ -1,14 +1,16 @@
-import React from "react";
+import React from "react"; 
 import { Link } from "react-router-dom";
-import iconCart from "../assets/images/iconCart.png";
 import { useSelector, useDispatch } from "react-redux";
+import { Modal, message } from "antd"; // Import Modal and message from Ant Design
 import { addToCart } from "../store/cart";
+import iconCart from "../assets/images/iconCart.png";
 
 const ProductCart = (props) => {
   const carts = useSelector((store) => store.cart.items);
   const dispatch = useDispatch();
   const { _id, name, buyPrice, rentPrice, image, buyStatus, rentStatus, category, createdAt, description, status, type } = props.data;
 
+  // Function to handle adding product to cart after confirmation
   const handleAddToCart = () => {
     console.log("Product being added to cart:", {
       _id,
@@ -41,38 +43,59 @@ const ProductCart = (props) => {
         type
       })
     );
+    message.success("Item added to cart successfully"); // Show success toast
   };
 
-  // Store product ID in local storage on click (for product details page)
+  // Function to show confirmation modal
+  const showConfirm = () => {
+    Modal.confirm({
+      title: "Are you sure to add the product to cart for purchase?",
+      okText: "Yes",
+      cancelText: "No",
+      onOk() {
+        handleAddToCart(); // Call add to cart function if user confirms
+      },
+      onCancel() {
+        console.log("Cancelled");
+      }
+    });
+  };
+
   const handleProductClick = () => {
     localStorage.setItem("selectedProductId", _id);
   };
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow-sm">
-      <Link to={`/detail/${_id}`} onClick={handleProductClick}> {/* Use ID in the URL */}
+    <div className="bg-white rounded-xl shadow-sm max-w-[300px] mx-2 my-4 pb-3"> 
+      <Link to={`/detail/${_id}`} onClick={handleProductClick}> 
         <img
           src={image}
           alt={name}
-          className="w-full h-80 object-cover object-top drop-shadow-[0_80px_30px_#0007]"
+          className="w-full h-[150px] object-cover object-top rounded-t-xl" 
         />
       </Link>
-      <h3 className="text-2xl py-3 text-center font-medium">{name}</h3>
-      <div className="flex justify-between items-center">
-        <div>
-          <p>Buy: $<span className="text-2xl font-medium">{buyPrice}</span></p>
-          <p>Rent: $<span className="text-xl font-medium">{rentPrice}</span></p>
-        </div>
+      <h3 className="text-lg py-2 px-2 font-semibold font-medium">{name}</h3>
+      
+      {/* Price Section */}
+      <div className=" flex gap-2 px-2">
+        <p className="text-xs text-grey-800">Buy: ${buyPrice}</p>
+        <p className="text-xs text-grey-800">Rent:${rentPrice}/day</p>
+      </div>
+
+      {/* Buttons Section */}
+      <div className="flex gap-2 px-2">
+        <button className="bg-red-500 text-white px-3 py-1 rounded-sm text-sm hover:bg-red-600"> 
+          Rent It
+        </button>
         <button
-          className="bg-gray-300 p-2 rounded-md text-sm hover:bg-gray-400 flex gap-2"
-          onClick={handleAddToCart}
+          className="border border-red-600 text-red-600 px-3 py-1 rounded-sm text-sm"
+          onClick={showConfirm} // Show confirmation modal when clicked
         >
-          <img src={iconCart} alt="Add to Cart" className="w-5" />
-          Add To Cart
+          Buy It
         </button>
       </div>
     </div>
   );
-}
+};
 
-export default ProductCart
+export default ProductCart;

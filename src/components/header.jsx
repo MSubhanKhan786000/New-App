@@ -13,9 +13,7 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import cartIcon from "../assets/images/cart.png";
 import profileIcon from "../assets/images/profile.png";
-import logoutIcon from "../assets/images/logout.png";
 import { HiOutlineLogout } from "react-icons/hi";
 import { TiShoppingCart } from "react-icons/ti";
 import '../styles/header.css'

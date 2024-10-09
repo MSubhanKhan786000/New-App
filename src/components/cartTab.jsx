@@ -13,7 +13,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { changeQuantity } from "../store/cart";
-import { toast } from "react-toastify";
+import { Modal, message } from "antd"; // Importing Ant Design components
 import { MdDeleteOutline } from "react-icons/md";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
@@ -27,17 +27,22 @@ export default function Basic() {
     return total + (cartItem.buyPrice * cartItem.quantity);
   }, 0);
 
-  // Handle deleting an item (reduce quantity by 1 or remove it if the quantity is 0)
+  // Handle deleting an item with confirmation modal
   const handleDelete = (productId) => {
-    const item = cartItems.find((cartItem) => cartItem.productId === productId);
-    if (item.quantity > 1) {
-      // Reduce quantity by 1 if more than 1 item exists
-      dispatch(changeQuantity({ productId, quantity: item.quantity - 1 }));
-    } else {
-      // Remove the item if only 1 exists
-      dispatch(changeQuantity({ productId, quantity: 0 }));
-    }
-    toast.success("Cart Item deleted successfully");
+    Modal.confirm({
+      title: 'Are you sure you want to delete this item from the cart?',
+      onOk: () => {
+        const item = cartItems.find((cartItem) => cartItem.productId === productId);
+        if (item.quantity > 1) {
+          // Reduce quantity by 1 if more than 1 item exists
+          dispatch(changeQuantity({ productId, quantity: item.quantity - 1 }));
+        } else {
+          // Remove the item if only 1 exists
+          dispatch(changeQuantity({ productId, quantity: 0 }));
+        }
+        message.success("Cart Item deleted successfully"); // Using Ant Design message
+      },
+    });
   };
 
   return (
@@ -70,7 +75,7 @@ export default function Basic() {
                     <div className="d-flex justify-content-between align-items-center mb-4">
                       <div>
                         <p className="mb-1">Shopping cart</p>
-                        <p className="mb-0">You have {cartItems.length}  items in your cart</p>
+                        <p className="mb-0">You have {cartItems.length} items in your cart</p>
                       </div>
                     </div>
 
