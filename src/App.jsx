@@ -17,6 +17,7 @@ import CartTab from "./components/cartTab";
 import { ToastContainer } from "react-toastify";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import RentDetail from "./pages/rentDetail";
 
 
 
@@ -30,7 +31,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="/detail/:id" element={<Detail />} /> {/* Update the path to use ID */}
+            <Route path="/detail/:id" element={<Detail />} />
             <Route path="/Earn" element={<Earn />} />
             <Route path="/Contact" element={<Contact />} />
             <Route path="/About" element={<About />} />
@@ -40,6 +41,8 @@ function App() {
             <Route path="/Men" element={<Men />} />
             <Route path="/Products" element={<Products />} />
             <Route path="/cart" element={<CartTab />} />
+            <Route path="/rentDetail/:id" element={<RentDetail />} />
+
           </Route>
         </Routes>
       </BrowserRouter>

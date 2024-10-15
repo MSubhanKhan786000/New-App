@@ -48,11 +48,9 @@ const Products = () => {
 
   return (
     <div>
-      {/* Pass setFilter function to the Filter component */}
       <Filter onFilterChange={setFilter} />
       
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 flex justify-center ml-5 mr-5">
-        {/* Display sorted products */}
         {filteredProducts().map((product) => (
           <ProductCart key={product._id} data={product} />
         ))}
