@@ -11,12 +11,11 @@ const Home = () => {
     queryFn: fetchProducts,
   });
 
-  console.log(JSON.stringify(data,null,2));
-  
-  // Centered loader spinner
+
+
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen"> {/* Center the spinner */}
+      <div className="flex justify-center items-center h-screen">
         <Spin size="large" />
       </div>
     );
@@ -30,7 +29,9 @@ const Home = () => {
 
   return (
     <div>
-        <HeroSection/>
+      <HeroSection />
+      <button className="btn btn-warning p-3 m-5">hello</button>
+      
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 flex justify-center ml-5 mr-5">
         {products.map((product) => (
           <ProductCart key={product._id} data={product} />

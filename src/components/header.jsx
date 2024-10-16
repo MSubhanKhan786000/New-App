@@ -1,49 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import iconCart from "../assets/images/iconCart.png";
+import React, { useEffect, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { toggleStatusTab } from "../store/cart";
-import logo from "../assets/images/logo.png";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import profileIcon from "../assets/images/profile.png";
-import { HiOutlineLogout } from "react-icons/hi";
+import Navbar from "react-bootstrap/Navbar";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import { TiShoppingCart } from "react-icons/ti";
-import '../styles/header.css'
-const Header = () => {
-  const pages = ["Women", "Men", "Products", "About", "Contact"];
+import profileIcon from "../assets/images/profile.png";
+import logo from "../assets/images/logo.png";
+import "../styles/header.css";
+import { FiLogOut } from "react-icons/fi";
+import { Button } from "react-bootstrap";
 
-  const [anchorElNav, setAnchorElNav] = useState(null);
+
+const Header = () => {
   const [totalQuantity, setTotalQuantity] = useState(0);
-  const carts = useSelector(store => store.cart.items);
+  const carts = useSelector((store) => store.cart.items);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); // Get current URL path
 
   const handleCartClick = () => {
-    navigate("/cart"); // Navigate to the cart route
+    navigate("/cart");
   };
 
   useEffect(() => {
     let total = 0;
-    carts.forEach(item => (total += item.quantity));
+    carts.forEach((item) => (total += item.quantity));
     setTotalQuantity(total);
   }, [carts]);
-
-  const handleOpenNavMenu = event => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
 
   const handleEarnWithUsClick = () => {
     navigate("/earn");
@@ -54,156 +38,116 @@ const Header = () => {
     window.location.href = "/login";
   };
 
-  const handleOpenTabCart = () => {
-    dispatch(toggleStatusTab());
-  };
-
+const handleProfile = () => {
+  navigate("/profile")
+}
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#fcedee" }}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Box
-            component="img"
+    <Navbar expand="lg" className="bg-header-bg">
+      <Container>
+        <Navbar.Brand onClick={() => navigate("/")}>
+          <img
             src={logo}
             alt="Logo"
-            sx={{
-              display: { xs: "none", md: "flex" },
-              mr: 2,
-              maxWidth: "150px",
-              cursor: "pointer",
-            }}
-            onClick={() => navigate("/")}
+            style={{ maxWidth: "150px", cursor: "pointer" }}
           />
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto ml-10">
+            <NavLink className="ms-2 nav-link" as={Link} to="/">
+              Home
+            </NavLink>
+            <NavLink className="ms-2 nav-link" as={Link} to="/products">
+              Products
+            </NavLink>
+            <NavLink className="ms-2 nav-link" as={Link} to="/about">
+              About Us
+            </NavLink>
+            <NavLink className="ms-2 nav-link" as={Link} to="/contact">
+              Contact Us
+            </NavLink>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="menu"
-              onClick={handleOpenNavMenu}
-              color="success"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{ display: { xs: "block", md: "none" } }}
-            >
-              {pages?.map(page => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Link
-                    to={`/${page.toLowerCase().replace(" ", "")}`}
-                    style={{
-                      textDecoration: "none",
-                      color: "#000000",
-                    }}
-                  >
-                    {page}
-                  </Link>
-                </MenuItem>
-              ))}
-              <MenuItem>
-                <Button
-                  onClick={handleEarnWithUsClick}
-                  sx={{
-                    color: "yellow",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Earn With Us
-                </Button>
-              </MenuItem>
-            </Menu>
-          </Box>
+            {/* Dropdown for Men */}
+            <NavDropdown title="Men" id="men-nav-dropdown">
+              <NavDropdown.Item as={Link} to="/men/barat">
+                Barat
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/men/mehndi">
+                Mehndi
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/men/walima">
+                Walima
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/men/nikkah">
+                Nikkah
+              </NavDropdown.Item>
+            </NavDropdown>
 
-          <Box
-            component="img"
-            src={logo}
-            alt="Logo"
-            sx={{
-              display: { xs: "flex", md: "none" },
-              mr: 2,
-              maxWidth: "100px",
-            }}
-          />
+            {/* Dropdown for Women */}
+            <NavDropdown title="Women" id="women-nav-dropdown">
+              <NavDropdown.Item as={Link} to="/women/barat">
+                Barat
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/women/mehndi">
+                Mehndi
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/women/walima">
+                Walima
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/women/nikkah">
+                Nikkah
+              </NavDropdown.Item>
+            </NavDropdown>
 
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: "flex" },
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {pages?.map(page => {
-              const pagePath = `/${page.toLowerCase().replace(" ", "")}`;
-              const isActive = location.pathname === pagePath;
-
-              return (
-                <Link
-                  key={page}
-                  to={pagePath}
-                  style={{
-                    color: isActive ? "#ffffff" : "black",
-                    textDecoration: "none",
-                    margin: "2px",
-                    padding: "5px", // Padding for consistency
-                    backgroundColor: isActive ? "#dc3545" : "transparent",
-                    borderRadius: "4px",
-                    display: "inline-block", // Keep it inline but block-like for width control
-                    width: "80px", // Fixed width for each tab (adjust as per your design)
-                    textAlign: "center", // Center the text within the button
-                  }}
-                >
-                  {page}
-                </Link>
-              );
-            })}
-
+            {/* Earn with Us button */}
+            {/* <Nav.Link className="bg" onClick={handleEarnWithUsClick}>Earn With Us</Nav.Link> */}
             <Button
-            className="button"
+            variant="danger"
+            className="text-white ml-9"
               onClick={handleEarnWithUsClick}
-              
             >
-              Earn with us
+              Earn With Us
             </Button>
-          </Box>
+          </Nav>
 
-          <Box sx={{ flexGrow: 0, display: "flex", gap: 2 }}>
-            <Box
-              className="w-8 h-8 bg-red-500 rounded-full flex justify-center items-center relative"
+          {/* Cart and Profile Section */}
+          <Nav className="d-flex align-items-center gap-3">
+            <div
               onClick={handleCartClick}
+              style={{ cursor: "pointer", position: "relative" }}
             >
-              <TiShoppingCart size={20} style={{ cursor: "pointer" }} />
-
-              <Box className="absolute top-2/3 right-1/2 bg-yellow-500 text-white text-sm w-5 h-5 rounded-full flex justify-center items-center">
+              <TiShoppingCart size={20} />
+              <span
+                className="badge bg-yellow-500 text-white text-sm"
+                style={{
+                  position: "absolute",
+                  top: "-5px",
+                  right: "-10px",
+                  backgroundColor: "#ffc107",
+                  borderRadius: "50%",
+                  width: "20px",
+                  height: "20px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 {totalQuantity}
-              </Box>
-            </Box>
-            <Box
-              component="img"
+              </span>
+            </div>
+            <img
               src={profileIcon}
               alt="Profile"
-              sx={{ width: 30, height: 30 }}
+              style={{ width: 30, height: 30 }}
+              onClick={handleProfile}
             />
-            <nav>
-              <HiOutlineLogout onClick={handleLogout} color="red" size={25} />
-            </nav>
-          </Box>
-        </Toolbar>
+            <Nav.Link onClick={handleLogout} style={{marginLeft:"-10px"}}>
+            <FiLogOut color="black" />
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
       </Container>
-    </AppBar>
+    </Navbar>
   );
 };
 

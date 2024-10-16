@@ -14,7 +14,7 @@ const Layout = () => {
         className={`
         ${statusTabCart === false ? "" : "-translate-x-56"}`}
       >
-        <Outlet />
+        {/* <Outlet /> */}
       </main>
       {/* <CartTab /> */}
     </div>

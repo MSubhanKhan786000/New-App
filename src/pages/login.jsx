@@ -6,6 +6,7 @@ import Colors from "../constants/Colors";
 // Importing eye icons (you can use any icon library, here I'm using FontAwesome)
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+
 function Login() {
   const [validated, setValidated] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -41,7 +42,7 @@ function Login() {
         setModalMessage,
         setModalType,
         setShowModal,
-        navigate
+        navigate,
       );
     }
 
