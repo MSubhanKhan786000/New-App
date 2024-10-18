@@ -14,8 +14,6 @@ function SignUp() {
   const [modalMessage, setModalMessage] = useState("");
   const [modalType, setModalType] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     fname: "",
     lname: "",
@@ -24,16 +22,17 @@ function SignUp() {
     address: "",
     password: "",
     city: "",
+    role: "user", // Default role is user
   });
+  const navigate = useNavigate();
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async event => {
+  const handleSubmit = async (event) => {
     const form = event.currentTarget;
-
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
@@ -43,8 +42,6 @@ function SignUp() {
     } else {
       event.preventDefault();
       setLoading(true);
-
-      // Pass all required parameters to handleRegister
       await handleRegister(
         formData,
         setLoading,
@@ -53,7 +50,6 @@ function SignUp() {
         setShowModal
       );
     }
-
     setValidated(true);
   };
 
@@ -125,8 +121,7 @@ function SignUp() {
                 onChange={handleChange}
               />
               <Form.Control.Feedback type="invalid">
-                Please enter a phone number in this format(3344567890) without
-                0.
+                Please enter a phone number in this format(3344567890) without 0.
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} md="6" controlId="email">
@@ -188,6 +183,25 @@ function SignUp() {
               </Form.Control.Feedback>
             </Form.Group>
           </Row>
+
+          {/* Role Dropdown */}
+          <Form.Group controlId="role">
+            <Form.Label>Role</Form.Label>
+            <Form.Control
+              as="select"
+              required
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+            >
+              <option value="user">User</option>
+              <option value="seller">Seller</option>
+            </Form.Control>
+            <Form.Control.Feedback type="invalid">
+              Please select a role.
+            </Form.Control.Feedback>
+          </Form.Group>
+
           <Button type="submit" className="w-100 mt-4" disabled={loading}>
             {loading ? "Signing up..." : "Sign Up"}
           </Button>
@@ -206,9 +220,8 @@ function SignUp() {
             content={modalMessage}
             onClose={() => {
               setShowModal(false);
-              // Navigate only if the modal is of type success
               if (modalType === "success") {
-                navigate("/login"); // Navigate to login page after closing the modal
+                navigate("/login");
               }
             }}
           />

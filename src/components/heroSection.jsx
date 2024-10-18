@@ -23,20 +23,25 @@ function HeroSection() {
           marginRight:"100px"
         }}
       >
-        <h1
+        <h3
           style={{
-            fontSize: "4vw",
+            fontSize: "2.5vw",
             fontWeight: "bold",
             color: "white",
+            textAlign:"center",
+            marginLeft:"70px"
           }}
         >
           Wedding Dresses for Rent
-        </h1>
+        </h3>
         <p
           style={{
-            fontSize: "1.5vw",
-            color: "#d1d1d1",  
+            fontSize: "1vw",
+            color: "gray",  
             marginBottom: "20px",
+            textAlign:"left",
+            marginLeft:"120px",
+            lineHeight:1.5
           }}
         >
           Elevate your special day with our exquisite wedding dress rentals, offering timeless elegance and unforgettable style for every bride.

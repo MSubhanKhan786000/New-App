@@ -7,7 +7,9 @@ module.exports = {
     extend: {
       colors: {
         'custom-blue': '#26DBE4',
-        'header-bg':"#fcedee"
+        'header-bg':"#fcedee",
+        'bg':"#141055",
+        'footer':"#FC0149"
       },
     },
   },

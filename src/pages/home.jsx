@@ -4,7 +4,7 @@ import { fetchProducts } from "../services/productService";
 import { useQuery } from "@tanstack/react-query";
 import { Spin } from "antd"; // Import Ant Design spinner
 import HeroSection from "../components/heroSection";
-
+import Footer from "../components/Footer/footer";
 const Home = () => {
   const { data, error, isLoading } = useQuery({
     queryKey: ["products"],
@@ -30,13 +30,12 @@ const Home = () => {
   return (
     <div>
       <HeroSection />
-      <button className="btn btn-warning p-3 m-5">hello</button>
-      
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 flex justify-center ml-5 mr-5">
         {products.map((product) => (
           <ProductCart key={product._id} data={product} />
         ))}
       </div>
+      <Footer/>
     </div>
   );
 };
