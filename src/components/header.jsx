@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -11,13 +11,13 @@ import logo from "../assets/images/logo.png";
 import "../styles/header.css";
 import { FiLogOut } from "react-icons/fi";
 import { Button } from "react-bootstrap";
-
+import { UserContext } from "../context/UserContext"; // Import UserContext
 
 const Header = () => {
   const [totalQuantity, setTotalQuantity] = useState(0);
   const carts = useSelector((store) => store.cart.items);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { userInfo } = useContext(UserContext); // Get userInfo from UserContext
 
   const handleCartClick = () => {
     navigate("/cart");
@@ -34,13 +34,14 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("userId");
+    localStorage.removeItem("userId"); // Remove userId from localStorage
     window.location.href = "/login";
   };
 
-const handleProfile = () => {
-  navigate("/profile")
-}
+  const handleProfile = () => {
+    navigate("/profile");
+  };
+
   return (
     <Navbar expand="lg" className="bg-header-bg">
       <Container>
@@ -54,95 +55,134 @@ const handleProfile = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto ml-10">
-            <NavLink className="ms-2 nav-link" as={Link} to="/">
-              Home
-            </NavLink>
-            <NavLink className="ms-2 nav-link" as={Link} to="/products">
-              Products
-            </NavLink>
-            <NavLink className="ms-2 nav-link" as={Link} to="/about">
-              About Us
-            </NavLink>
-            <NavLink className="ms-2 nav-link" as={Link} to="/contact">
-              Contact Us
-            </NavLink>
+            {/* Conditional rendering based on user role */}
+            {userInfo?.role === "user" ? (
+              <>
+                <NavLink className="ms-2 nav-link" as={Link} to="/">
+                  Home
+                </NavLink>
+                <NavLink className="ms-2 nav-link" as={Link} to="/products">
+                  Products
+                </NavLink>
+                <NavLink className="ms-2 nav-link" as={Link} to="/about">
+                  About Us
+                </NavLink>
+                <NavLink className="ms-2 nav-link" as={Link} to="/contact">
+                  Contact Us
+                </NavLink>
 
-            {/* Dropdown for Men */}
-            <NavDropdown title="Men" id="men-nav-dropdown">
-              <NavDropdown.Item as={Link} to="/men/barat">
-                Barat
-              </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/men/mehndi">
-                Mehndi
-              </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/men/walima">
-                Walima
-              </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/men/nikkah">
-                Nikkah
-              </NavDropdown.Item>
-            </NavDropdown>
+                <NavDropdown title="Men" id="men-nav-dropdown">
+                  <NavDropdown.Item as={Link} to="/men">
+                    Barat
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/men">
+                    Mehndi
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/men">
+                    Walima
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/men">
+                    Nikkah
+                  </NavDropdown.Item>
+                </NavDropdown>
 
-            {/* Dropdown for Women */}
-            <NavDropdown title="Women" id="women-nav-dropdown">
-              <NavDropdown.Item as={Link} to="/women/barat">
-                Barat
-              </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/women/mehndi">
-                Mehndi
-              </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/women/walima">
-                Walima
-              </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/women/nikkah">
-                Nikkah
-              </NavDropdown.Item>
-            </NavDropdown>
+                <NavDropdown title="Women" id="women-nav-dropdown">
+                  <NavDropdown.Item as={Link} to="/women">
+                    Barat
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/women">
+                    Mehndi
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/women">
+                    Walima
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/women">
+                    Nikkah
+                  </NavDropdown.Item>
+                </NavDropdown>
 
-            {/* Earn with Us button */}
-            {/* <Nav.Link className="bg" onClick={handleEarnWithUsClick}>Earn With Us</Nav.Link> */}
-            <Button
-            variant="danger"
-            className="text-white ml-9"
-              onClick={handleEarnWithUsClick}
-            >
-              Earn With Us
-            </Button>
+                {/* Replace "Earn With Us" with "Become a Seller" */}
+                <Button
+                  variant="danger"
+                  className="text-white ml-9"
+                  onClick={() => {
+                    navigate("/signup"); // Navigate to signup
+                    localStorage.removeItem("userId"); // Remove userId from localStorage
+                  }}
+                >
+                  Become a Seller
+                </Button>
+              </>
+            ) : userInfo?.role === "seller" ? (
+              <>
+                <NavLink
+                  className="ms-2 nav-link"
+                  as={Link}
+                  to="/sellerProducts"
+                >
+                  Products
+                </NavLink>
+                <NavLink
+                  className="ms-2 nav-link"
+                  as={Link}
+                  to="/sellerEarnings"
+                >
+                  Earnings
+                </NavLink>
+                <NavLink className="ms-2 nav-link" as={Link} to="/about">
+                  About Us
+                </NavLink>
+                <NavLink className="ms-2 nav-link" as={Link} to="/contact">
+                  Contact Us
+                </NavLink>
+
+                <Button
+                  variant="danger"
+                  className="text-white ml-9"
+                  onClick={handleEarnWithUsClick}
+                >
+                  Earn With Us
+                </Button>
+              </>
+            ) : null}
           </Nav>
-
-          {/* Cart and Profile Section */}
           <Nav className="d-flex align-items-center gap-3">
-            <div
-              onClick={handleCartClick}
-              style={{ cursor: "pointer", position: "relative" }}
-            >
-              <TiShoppingCart size={20} />
-              <span
-                className="badge bg-yellow-500 text-white text-sm"
-                style={{
-                  position: "absolute",
-                  top: "-5px",
-                  right: "-10px",
-                  backgroundColor: "#ffc107",
-                  borderRadius: "50%",
-                  width: "20px",
-                  height: "20px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {totalQuantity}
-              </span>
-            </div>
+            {/* Cart and Profile Section */}
+            {userInfo?.role === "user" && (
+              <Nav className="d-flex align-items-center gap-3">
+                <div
+                  onClick={handleCartClick}
+                  style={{ cursor: "pointer", position: "relative" }}
+                >
+                  <TiShoppingCart size={20} />
+                  <span
+                    className="badge bg-yellow-500 text-white text-sm"
+                    style={{
+                      position: "absolute",
+                      top: "-5px",
+                      right: "-10px",
+                      backgroundColor: "#ffc107",
+                      borderRadius: "50%",
+                      width: "20px",
+                      height: "20px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {totalQuantity}
+                  </span>
+                </div>
+              </Nav>
+            )}
             <img
               src={profileIcon}
               alt="Profile"
               style={{ width: 30, height: 30 }}
               onClick={handleProfile}
             />
-            <Nav.Link onClick={handleLogout} style={{marginLeft:"-10px"}}>
-            <FiLogOut color="black" />
+            <Nav.Link onClick={handleLogout} style={{ marginLeft: "-10px" }}>
+              <FiLogOut color="black" />
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
