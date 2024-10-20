@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchProductById } from "../services/productService";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../store/cart";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import {
@@ -47,20 +47,47 @@ const Detail = () => {
   const handlePlusQuantity = () => {
     setQuantity(quantity + 1);
   };
-
+  const cartItems = useSelector((state) => state.cart.items);
   const handleAddToCart = () => {
+    if (detail.quantity === 0) {
+      // Show notification when item is out of stock
+      notification.error({
+        message: "Sorry",
+        description: "Item will be available for purchase soon",
+        placement: "topRight",
+      });
+      return; // Exit the function since the item is unavailable
+    }
+
     if (detail && detail._id) {
       console.log("Adding product to cart:", detail._id);
-      dispatch(
-        addToCart({
-          productId: detail._id,
-          name: detail.name,
-          buyPrice: detail.buyPrice,
-          image: detail.image,
-          description: detail.description,
-          quantity: quantity,
-        })
+
+      const existingProduct = cartItems.find(
+        (item) => item.productId === detail._id
       );
+      if (existingProduct) {
+        dispatch(
+          addToCart({
+            productId: detail._id,
+            name: detail.name,
+            buyPrice: detail.buyPrice,
+            image: detail.image,
+            description: detail.description,
+            quantity: existingProduct.quantity + quantity,
+          })
+        );
+      } else {
+        dispatch(
+          addToCart({
+            productId: detail._id,
+            name: detail.name,
+            buyPrice: detail.buyPrice,
+            image: detail.image,
+            description: detail.description,
+            quantity: quantity,
+          })
+        );
+      }
     } else {
       console.error("Product ID is missing!");
     }
