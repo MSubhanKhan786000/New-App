@@ -104,7 +104,10 @@ export default function Basic() {
                                   src={image}
                                   fluid
                                   className="rounded-3"
-                                  style={{ width: "100px", height: "100px" }}
+                                  style={{
+                                    width: "100px",
+                                    height: "100px",
+                                  }}
                                   alt={name}
                                 />
                                 <div className="ms-3">
@@ -138,7 +141,7 @@ export default function Basic() {
                                   className="d-flex justify-content-center align-items-center"
                                 >
                                   <MDBTypography tag="h5" className="mb-0">
-                                    ${(buyPrice * cartItem.quantity).toFixed(2)}
+                                    ${buyPrice * cartItem.quantity}
                                   </MDBTypography>
                                 </div>
 
@@ -158,11 +161,11 @@ export default function Basic() {
 
                               <div className="d-flex justify-content-center mt-3">
                                 {/* <Chip sx={{marginLeft:"100"}} label="success" color="success" /> */}
-                                <Chip
+                                {/* <Chip
                                   sx={{ marginLeft: "100px" }}
                                   label="Available"
                                   color="warning"
-                                />
+                                /> */}
                               </div>
                             </div>
                           </MDBCardBody>

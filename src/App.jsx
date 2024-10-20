@@ -15,7 +15,7 @@ import { ToastContainer } from "react-toastify";
 import RentDetail from "./pages/rentDetail";
 import Profile from "./pages/profile";
 import { UserContextProvider } from "./context/UserContext";
-import NoAccess from "./pages/noAccess";
+import NoAccess from "./pages/noAccess"; // Added
 import Seller from "./pages/Seller/seller";
 import PrivateRoutes from "./utils/privateRoutes";
 import Header from "./components/header";
@@ -30,10 +30,8 @@ const queryClient = new QueryClient();
 function MainLayout() {
   const location = useLocation();
 
-  // Define routes where the footer should not be displayed
   const noFooterRoutes = ["/login", "/signup"];
 
-  // Convert pathname to lowercase and strip trailing slash for comparison
   const currentPath = location.pathname.toLowerCase().replace(/\/$/, "");
 
   return (
@@ -42,7 +40,6 @@ function MainLayout() {
       <Routes>
         <Route path="/Login" element={<Login />} />
         <Route path="/SignUp" element={<SignUp />} />
-
         <Route
           path="/"
           element={
@@ -125,7 +122,6 @@ function MainLayout() {
             </PrivateRoutes>
           }
         />
-
         <Route
           path="/sellerProducts"
           element={
@@ -143,13 +139,13 @@ function MainLayout() {
           }
         />
         <Route path="/private" element={<PrivateRoutes />} />
-        <Route path="/not-found" element={<NoAccess />} />
+        <Route path="/not-found" element={<NoAccess />} />{" "}
+        {/* Not Found Page */}
         <Route path="/policy" element={<PrivacyPolicy />} />
         <Route path="/return" element={<Return />} />
         <Route path="/shipping" element={<Shipping />} />
       </Routes>
 
-      {/* Conditionally render the Footer */}
       {!noFooterRoutes.includes(currentPath) && <Footer />}
     </>
   );

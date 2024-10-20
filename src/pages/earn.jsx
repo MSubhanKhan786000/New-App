@@ -1,26 +1,146 @@
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import * as formik from "formik";
 import * as yup from "yup";
-import Colors from "../constants/Colors";
+import { useState, useContext } from "react";
 import HeroImg from "../assets/images/earn.png";
+import axios from "axios";
+import { UserContext } from "../context/UserContext"; // Import the UserContext
 
 function Earn() {
+  const { userInfo } = useContext(UserContext); // Get userInfo from context
   const { Formik } = formik;
 
+  // Sample data for category and type handling
+  const typesForMen = ["Shirt", "Pants", "Jacket"];
+  const typesForWomen = ["Dress", "Skirt", "Blouse"];
+
+  const [category, setCategory] = useState("");
+  const [type, setType] = useState("");
+  const [status, setStatus] = useState("");
+
+  // Yup schema for validation
   const schema = yup.object().shape({
-    firstName: yup.string().required(),
-    lastName: yup.string().required(),
-    username: yup.string().required(),
-    city: yup.string().required(),
-    state: yup.string().required(),
-    zip: yup.string().required(),
-    file: yup.mixed().required(),
-    terms: yup.bool().required().oneOf([true], "terms must be accepted"),
+    name: yup.string().required("Name is required"),
+    description: yup.string().required("Description is required"),
+    buyPrice: yup.number().min(0, "Enter valid Price").nullable(),
+    rentPrice: yup.number().min(0, "Enter valid Price").nullable(),
+    status: yup.string().required("Status is required"),
+    category: yup.string().required("Category is required"),
+    type: yup.string().required("Type is required"),
+    quantity: yup.number().min(0, "Quantity is required").nullable(),
+    file: yup
+      .mixed()
+      .required("File is required")
+      .test(
+        "fileSize",
+        "File too large. Maximum size is 5MB",
+        (value) => value && value.size <= 5242880 // 5MB limit
+      )
+      .test(
+        "fileFormat",
+        "Unsupported Format",
+        (value) =>
+          value && ["image/jpeg", "image/png", "image/jpg"].includes(value.type)
+      ),
   });
+
+  const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
+    setCategory(selectedCategory);
+
+    if (selectedCategory === "Men") {
+      setType(typesForMen[0] || ""); // Set first type of men, or empty string
+    } else if (selectedCategory === "Women") {
+      setType(typesForWomen[0] || ""); // Set first type of women, or empty string
+    }
+  };
+
+  const handleStatusChange = (e) => {
+    const selectedStatus = e.target.value;
+    setStatus(selectedStatus);
+  };
+
+  const handleTypeChange = (e) => {
+    setType(e.target.value);
+  };
+
+  const renderTypeOptions = () => {
+    if (category === "Men") {
+      return typesForMen.map((type, index) => (
+        <option key={index} value={type}>
+          {type}
+        </option>
+      ));
+    } else if (category === "Women") {
+      return typesForWomen.map((type, index) => (
+        <option key={index} value={type}>
+          {type}
+        </option>
+      ));
+    } else {
+      return <option value="">Select Category First</option>;
+    }
+  };
+
+  const handleFormSubmit = async (values, { resetForm, setFieldValue }) => {
+    const { buyPrice, rentPrice, status, quantity } = values;
+    const sellerId = localStorage.getItem("userId");
+
+    if (status === "Buy" && !buyPrice) {
+      alert("Buy Price is required when status is Buy");
+      return;
+    } else if (status === "Rent" && !rentPrice) {
+      alert("Rent Price is required when status is Rent");
+      return;
+    } else if (status === "Both" && (!buyPrice || !rentPrice)) {
+      alert("Both Buy and Rent Price are required when status is Both");
+      return;
+    }
+
+    if (userInfo && userInfo.role === "seller") {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("description", values.description);
+      formData.append("buyPrice", Number(values.buyPrice));
+      formData.append(
+        "rentPrice",
+        status === "Buy" ? null : Number(values.rentPrice)
+      );
+      formData.append("status", values.status);
+      formData.append("category", values.category);
+      formData.append("type", values.type);
+      formData.append("image", values.file);
+      formData.append("sellerId", sellerId);
+      formData.append("quantity", values.quantity);
+      formData.append("approvalStatus", "pending");
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/collections",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.status === 201) {
+          alert("Product submitted successfully!");
+          resetForm(); // Reset form fields after successful submission
+          setFieldValue("file", null); // Reset file input manually
+          setFieldValue("quantity", 1); // Reset quantity manually
+        }
+      } catch (error) {
+        console.error("Error submitting product:", error);
+        alert("There was an error submitting your product.");
+      }
+    } else {
+      alert("You must be logged in as a seller to submit a product.");
+    }
+  };
 
   return (
     <>
@@ -57,178 +177,194 @@ function Earn() {
           </div>
         </div>
       </div>
-      {/* form for eearn with us */}
+      {/* form for earn with us */}
       <div className="flex items-center justify-center min-h-screen">
         {/* top section of Earn With Us */}
-
         {/* Form for Earn with Us */}
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl mt-5 mb-20">
           <Formik
             validationSchema={schema}
-            onSubmit={console.log}
+            onSubmit={handleFormSubmit}
             initialValues={{
-              firstName: "Mark",
-              lastName: "Otto",
-              username: "",
-              city: "",
-              state: "",
-              zip: "",
+              name: "",
+              description: "",
+              buyPrice: "",
+              rentPrice: "",
+              status: "",
+              category: "",
+              type: "",
               file: null,
-              terms: false,
+              quantity: 1,
             }}
           >
-            {({ handleSubmit, handleChange, values, touched, errors }) => (
+            {({
+              handleSubmit,
+              handleChange,
+              setFieldValue,
+              values,
+              touched,
+              errors,
+            }) => (
               <Form noValidate onSubmit={handleSubmit}>
                 <Row className="mb-3">
-                  <Form.Group
-                    as={Col}
-                    md="4"
-                    controlId="validationFormik101"
-                    className="position-relative"
-                  >
-                    <Form.Label>First name</Form.Label>
+                  <Form.Group as={Col} md="6" controlId="name">
+                    <Form.Label>Name</Form.Label>
                     <Form.Control
                       type="text"
-                      name="firstName"
-                      value={values.firstName}
+                      name="name"
+                      value={values.name}
                       onChange={handleChange}
-                      isValid={touched.firstName && !errors.firstName}
+                      isInvalid={!!errors.name}
                     />
-                    <Form.Control.Feedback tooltip>
-                      Looks good!
+                    <Form.Control.Feedback type="invalid">
+                      {errors.name}
                     </Form.Control.Feedback>
                   </Form.Group>
-                  <Form.Group
-                    as={Col}
-                    md="4"
-                    controlId="validationFormik102"
-                    className="position-relative"
-                  >
-                    <Form.Label>Last name</Form.Label>
+                  <Form.Group as={Col} md="6" controlId="status">
+                    <Form.Label>Status</Form.Label>
                     <Form.Control
-                      type="text"
-                      name="lastName"
-                      value={values.lastName}
-                      onChange={handleChange}
-                      isValid={touched.lastName && !errors.lastName}
-                    />
-
-                    <Form.Control.Feedback tooltip>
-                      Looks good!
+                      as="select"
+                      name="status"
+                      value={values.status}
+                      onChange={(e) => {
+                        handleChange(e);
+                        handleStatusChange(e);
+                      }}
+                      isInvalid={!!errors.status}
+                    >
+                      <option value="">Choose...</option>
+                      <option value="Buy">Buy</option>
+                      <option value="Rent">Rent</option>
+                      <option value="Both">Both</option>
+                    </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.status}
                     </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group
-                    as={Col}
-                    md="4"
-                    controlId="validationFormikUsername2"
-                  >
-                    <Form.Label>Username</Form.Label>
-                    <InputGroup hasValidation>
-                      <InputGroup.Text id="inputGroupPrepend">
-                        @
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="text"
-                        placeholder="Username"
-                        aria-describedby="inputGroupPrepend"
-                        name="username"
-                        value={values.username}
-                        onChange={handleChange}
-                        isInvalid={!!errors.username}
-                      />
-                      <Form.Control.Feedback type="invalid" tooltip>
-                        {errors.username}
-                      </Form.Control.Feedback>
-                    </InputGroup>
                   </Form.Group>
                 </Row>
                 <Row className="mb-3">
-                  <Form.Group
-                    as={Col}
-                    md="6"
-                    controlId="validationFormik103"
-                    className="position-relative"
-                  >
-                    <Form.Label>City</Form.Label>
+                  <Form.Group as={Col} md="12" controlId="description">
+                    <Form.Label>Description</Form.Label>
                     <Form.Control
+                      as="textarea"
                       type="text"
-                      placeholder="City"
-                      name="city"
-                      value={values.city}
+                      name="description"
+                      value={values.description}
                       onChange={handleChange}
-                      isInvalid={!!errors.city}
+                      isInvalid={!!errors.description}
                     />
-
-                    <Form.Control.Feedback type="invalid" tooltip>
-                      {errors.city}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group
-                    as={Col}
-                    md="3"
-                    controlId="validationFormik104"
-                    className="position-relative"
-                  >
-                    <Form.Label>State</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="State"
-                      name="state"
-                      value={values.state}
-                      onChange={handleChange}
-                      isInvalid={!!errors.state}
-                    />
-                    <Form.Control.Feedback type="invalid" tooltip>
-                      {errors.state}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group
-                    as={Col}
-                    md="3"
-                    controlId="validationFormik105"
-                    className="position-relative"
-                  >
-                    <Form.Label>Zip</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Zip"
-                      name="zip"
-                      value={values.zip}
-                      onChange={handleChange}
-                      isInvalid={!!errors.zip}
-                    />
-
-                    <Form.Control.Feedback type="invalid" tooltip>
-                      {errors.zip}
+                    <Form.Control.Feedback type="invalid">
+                      {errors.description}
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Row>
-                <Form.Group className="position-relative mb-3">
-                  <Form.Label>File</Form.Label>
-                  <Form.Control
-                    type="file"
-                    required
-                    name="file"
-                    onChange={handleChange}
-                    isInvalid={!!errors.file}
-                  />
-                  <Form.Control.Feedback multiple type="invalid" tooltip>
-                    {errors.file}
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group className="position-relative mb-3">
-                  <Form.Check
-                    required
-                    name="terms"
-                    label="Agree to terms and conditions"
-                    onChange={handleChange}
-                    isInvalid={!!errors.terms}
-                    feedback={errors.terms}
-                    feedbackType="invalid"
-                    id="validationFormik106"
-                    feedbackTooltip
-                  />
-                </Form.Group>
+
+                <Row className="mb-3">
+                  <Form.Group as={Col} md="6" controlId="buyPrice">
+                    <Form.Label>Buy Price</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="buyPrice"
+                      value={values.buyPrice}
+                      onChange={handleChange}
+                      disabled={status === "Rent"}
+                      isInvalid={!!errors.buyPrice}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.buyPrice}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group as={Col} md="6" controlId="rentPrice">
+                    <Form.Label>Rent Price</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="rentPrice"
+                      value={values.rentPrice}
+                      onChange={handleChange}
+                      disabled={status === "Buy"}
+                      isInvalid={!!errors.rentPrice}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.rentPrice}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group as={Col} md="6" controlId="quantity">
+                    <Form.Label>Quantity</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="quantity"
+                      value={values.quantity}
+                      onChange={handleChange}
+                      isInvalid={!!errors.quantity}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.quantity}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Row>
+
+                <Row className="mb-3">
+                  <Form.Group as={Col} md="6" controlId="category">
+                    <Form.Label>Category</Form.Label>
+                    <Form.Control
+                      as="select"
+                      name="category"
+                      value={values.category}
+                      onChange={(e) => {
+                        handleChange(e);
+                        handleCategoryChange(e);
+                      }}
+                      isInvalid={!!errors.category}
+                    >
+                      <option value="">Choose...</option>
+                      <option value="Men">Men</option>
+                      <option value="Women">Women</option>
+                    </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.category}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group as={Col} md="6" controlId="type">
+                    <Form.Label>Type</Form.Label>
+                    <Form.Control
+                      as="select"
+                      name="type"
+                      value={values.type}
+                      onChange={(e) => {
+                        handleChange(e);
+                        handleTypeChange(e);
+                      }}
+                      disabled={!category}
+                      isInvalid={!!errors.type}
+                    >
+                      {renderTypeOptions()}
+                    </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.type}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Row>
+
+                <Row className="mb-3">
+                  <Form.Group as={Col} md="6" controlId="file">
+                    <Form.Label>Upload Image</Form.Label>
+                    <Form.Control
+                      type="file"
+                      name="file"
+                      onChange={(event) => {
+                        setFieldValue("file", event.currentTarget.files[0]);
+                      }}
+                      isInvalid={!!errors.file}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.file}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Row>
+
                 <Button type="submit">Submit form</Button>
               </Form>
             )}

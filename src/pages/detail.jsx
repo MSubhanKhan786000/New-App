@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; 
-import { fetchProductById } from "../services/productService"; 
+import { useParams, useNavigate } from "react-router-dom";
+import { fetchProductById } from "../services/productService";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../store/cart";
-import { MdOutlineKeyboardBackspace } from "react-icons/md"; 
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import {
   MDBContainer,
   MDBRow,
   MDBCol,
   MDBCard,
   MDBCardBody,
-} from "mdb-react-ui-kit"; 
+} from "mdb-react-ui-kit";
 import RatingComponent from "../components/rating";
+import { CheckCircleTwoTone } from "@ant-design/icons";
+import { notification, Tag } from "antd";
 
 const Detail = () => {
-  const { id } = useParams(); 
-  const [detail, setDetail] = useState([]);
+  const { id } = useParams();
+  const [detail, setDetail] = useState({});
+  console.log("----------", detail);
+
+  console.log("These are details of product", detail);
 
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
@@ -25,15 +30,15 @@ const Detail = () => {
     const getProductDetails = async () => {
       try {
         const response = await fetchProductById(id);
-        
+
         setDetail(response);
       } catch (error) {
         console.error("Error fetching product details:", error);
-        navigate("/"); 
+        navigate("/");
       }
     };
     getProductDetails();
-  }, [id, navigate]); 
+  }, [id, navigate]);
 
   const handleMinusQuantity = () => {
     setQuantity(quantity - 1 < 1 ? 1 : quantity - 1);
@@ -44,13 +49,20 @@ const Detail = () => {
   };
 
   const handleAddToCart = () => {
-    if (detail) {
+    if (detail && detail._id) {
+      console.log("Adding product to cart:", detail._id);
       dispatch(
         addToCart({
           productId: detail._id,
+          name: detail.name,
+          buyPrice: detail.buyPrice,
+          image: detail.image,
+          description: detail.description,
           quantity: quantity,
         })
       );
+    } else {
+      console.error("Product ID is missing!");
     }
   };
 
@@ -59,7 +71,9 @@ const Detail = () => {
   };
 
   if (!detail) {
-    return <div className="text-center text-xl">Loading product details...</div>;
+    return (
+      <div className="text-center text-xl">Loading product details...</div>
+    );
   }
 
   return (
@@ -76,7 +90,17 @@ const Detail = () => {
                   <button onClick={handleBack} className="mr-5">
                     <MdOutlineKeyboardBackspace className="text-2xl text-gray-600 hover:text-gray-800" />
                   </button>
-                  <p style={{fontSize:"18px",fontWeight:"bold",color:"grey",textAlign:"center", marginTop:"-30px"}}>PRODUCT DETAILS</p>
+                  <p
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "bold",
+                      color: "grey",
+                      textAlign: "center",
+                      marginTop: "-30px",
+                    }}
+                  >
+                    PRODUCT DETAILS
+                  </p>
                 </div>
                 <hr />
 
@@ -88,14 +112,38 @@ const Detail = () => {
                       className="w-[500px] rounded-lg shadow-lg"
                     />
                   </MDBCol>
-                  <MDBCol lg="6" className="flex flex-col justify-between p-4 bg-white rounded-lg shadow-md">
-                    <div style={{display:"flex",alignItems:"center", justifyContent:"space-between"}}>
-                    <h3 className="text-4xl uppercase font-bold mb-3">{detail.name}</h3>
-                    <RatingComponent  />
+                  <MDBCol
+                    lg="6"
+                    className="flex flex-col justify-between p-4 bg-white rounded-lg shadow-md"
+                  >
+                    <Tag
+                      color="#f50"
+                      className="text-center w-[100px] mb-1 pt-1 font-bold"
+                    >
+                      {detail.quantity == 0 ? (
+                        <p>No Item Left</p>
+                      ) : (
+                        <p className="text-justify w-[100px] mb-1 pt-1 font-bold">
+                          Items Left: {detail.quantity}
+                        </p>
+                      )}
+                    </Tag>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <h3 className="text-4xl uppercase font-bold mb-3">
+                        {detail.name}
+                      </h3>
+                      <RatingComponent />
                     </div>
                     <p className="font-bold text-3xl text-green-600 mb-4">
-                      ${detail.buyPrice || detail.rentPrice}
+                      ${detail.buyPrice}
                     </p>
+                    {/* <CheckCircleTwoTone twoToneColor="#52c41a" /> */}
                     <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
                       <div className="flex gap-2 items-center">
                         <button
@@ -121,7 +169,10 @@ const Detail = () => {
                         Add To Cart
                       </button>
                     </div>
-                    <p className="text-gray-700 text-sm mb-4">{detail.description}</p> {/* Adjusted text size */}
+                    <p className="text-gray-700 text-sm mb-4">
+                      {detail.description}
+                    </p>{" "}
+                    {/* Adjusted text size */}
                   </MDBCol>
                 </MDBRow>
               </MDBCardBody>

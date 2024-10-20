@@ -23,7 +23,6 @@ const RentDetail = () => {
   const [dateRange, setDateRange] = useState([null, null]);
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const getProductDetail = async () => {
       try {

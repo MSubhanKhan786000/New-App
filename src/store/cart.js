@@ -15,7 +15,7 @@ const cartSlice = createSlice({
       const product = action.payload;
 
       const existingItemIndex = state.items.findIndex(
-        (item) => item.productId === product._id
+        (item) => item.productId === product.productId // Change from product._id to product.productId
       );
 
       if (existingItemIndex >= 0) {
@@ -54,7 +54,9 @@ const cartSlice = createSlice({
         state.items[existingItemIndex].quantity = quantity;
       } else {
         // Remove the product from the cart when quantity is 0
-        state.items = state.items.filter((item) => item.productId !== productId);
+        state.items = state.items.filter(
+          (item) => item.productId !== productId
+        );
       }
 
       // Update localStorage with the new cart state

@@ -8,7 +8,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { TiShoppingCart } from "react-icons/ti";
 import profileIcon from "../assets/images/profile.png";
 import logo from "../assets/images/logo.png";
-import "../styles/header.css";
+// import "../styles/header.css";
 import { FiLogOut } from "react-icons/fi";
 import { Button } from "react-bootstrap";
 import { UserContext } from "../context/UserContext"; // Import UserContext
@@ -54,7 +54,7 @@ const Header = () => {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto ml-10">
+          <Nav className="me-auto ml-10 space-x-4">
             {/* Conditional rendering based on user role */}
             {userInfo?.role === "user" ? (
               <>
@@ -64,10 +64,20 @@ const Header = () => {
                 <NavLink className="ms-2 nav-link" as={Link} to="/products">
                   Products
                 </NavLink>
-                <NavLink className="ms-2 nav-link" as={Link} to="/about">
+                <NavLink
+                  className="ms-2 nav-link"
+                  as={Link}
+                  to="/about"
+                  style={{ whiteSpace: "nowrap" }}
+                >
                   About Us
                 </NavLink>
-                <NavLink className="ms-2 nav-link" as={Link} to="/contact">
+                <NavLink
+                  className="ms-2 nav-link"
+                  as={Link}
+                  to="/contact"
+                  style={{ whiteSpace: "nowrap" }}
+                >
                   Contact Us
                 </NavLink>
 
@@ -101,16 +111,16 @@ const Header = () => {
                   </NavDropdown.Item>
                 </NavDropdown>
 
-                {/* Replace "Earn With Us" with "Become a Seller" */}
                 <Button
                   variant="danger"
-                  className="text-white ml-9"
+                  className="text-white ml-9 no-wrap"
+                  style={{ whiteSpace: "nowrap", padding: "-2px 8px" }}
                   onClick={() => {
                     navigate("/signup"); // Navigate to signup
                     localStorage.removeItem("userId"); // Remove userId from localStorage
                   }}
                 >
-                  Become a Seller
+                  Become Seller
                 </Button>
               </>
             ) : userInfo?.role === "seller" ? (
@@ -160,7 +170,7 @@ const Header = () => {
                     style={{
                       position: "absolute",
                       top: "-5px",
-                      right: "-10px",
+                      right: "-12px",
                       backgroundColor: "#ffc107",
                       borderRadius: "50%",
                       width: "20px",
