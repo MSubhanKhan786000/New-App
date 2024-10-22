@@ -6,41 +6,30 @@ import { addToCart } from "../store/cart";
 
 const ProductCart = (props) => {
   const carts = useSelector((store) => store.cart.items);
-  console.log("These are carts from redux store", carts);
-
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+
   const {
     _id,
     name,
     buyPrice,
     rentPrice,
     image,
-    buyStatus,
-    rentStatus,
-    category,
-    createdAt,
-    description,
-    status,
-    type,
+    quantity, // Make sure quantity is passed from the parent component
   } = props.data;
+
+  // Check if the product is in the cart
+  const cartItem = carts.find((item) => item.productId === _id);
+  const cartQuantity = cartItem ? cartItem.quantity : 0; // Get the quantity from the cart or 0 if not present
 
   // Function to handle adding product to cart after confirmation
   const handleAddToCart = () => {
-    console.log("Product being added to cart:", {
-      _id,
-      name,
-      buyPrice,
-      rentPrice,
-      image,
-      buyStatus,
-      rentStatus,
-      category,
-      createdAt,
-      description,
-      status,
-      type,
-    });
+    const availableQuantity = quantity - cartQuantity; // Calculate available quantity
+
+    if (availableQuantity <= 0) {
+      message.error("Product is out of stock. Will be coming soon.");
+      return;
+    }
 
     dispatch(
       addToCart({
@@ -49,19 +38,19 @@ const ProductCart = (props) => {
         buyPrice,
         rentPrice,
         image,
-        buyStatus,
-        rentStatus,
-        category,
-        createdAt,
-        description,
-        status,
-        type,
       })
     );
     message.success("Item added to cart successfully");
   };
 
   const showConfirm = () => {
+    const availableQuantity = quantity - cartQuantity; // Calculate available quantity
+
+    if (availableQuantity <= 0) {
+      message.error("Product is out of stock. Will be coming soon.");
+      return;
+    }
+
     Modal.confirm({
       title: "Are you sure to add the product to cart for purchase?",
       okText: "Yes",

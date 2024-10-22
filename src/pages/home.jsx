@@ -4,6 +4,7 @@ import { fetchProducts } from "../services/productService";
 import { useQuery } from "@tanstack/react-query";
 import { Spin } from "antd";
 import Hero from "../components/hero";
+
 const Home = () => {
   const { data, error, isLoading } = useQuery({
     queryKey: ["products"],
@@ -24,6 +25,11 @@ const Home = () => {
 
   const products = data?.data || [];
 
+  // Filter products to only show those with approvalStatus === "completed"
+  const filteredProducts = products.filter(
+    (product) => product.approvalStatus === "completed"
+  );
+
   return (
     <div>
       <Hero />
@@ -31,12 +37,12 @@ const Home = () => {
         <p className="text-2xl font-bold text-center pt-4">Our Products</p>
         <p className="text-center md:text-center px-10 pt-2 text-gray">
           Contemporary Pakistani Wedding dresses meticulously handicrafted with
-          tradational embellesmensts and embriodery techniques inspired by the
-          subcontinent's heritage.Each carefully crafted dress is designed to
-          compliment brides look on her wedding day
+          traditional embellishments and embroidery techniques inspired by the
+          subcontinent's heritage. Each carefully crafted dress is designed to
+          complement brides' looks on her wedding day.
         </p>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 flex justify-center ml-5 mr-5 px-20">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <ProductCart key={product._id} data={product} />
           ))}
         </div>

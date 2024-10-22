@@ -14,6 +14,9 @@ import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDa
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Grid2, Typography } from "@mui/material";
+import { notification } from "antd"; // Import Ant Design notification
+import { addToCart } from "../store/cart";
+import { useDispatch } from "react-redux";
 
 const RentDetail = () => {
   const { id } = useParams();
@@ -22,6 +25,7 @@ const RentDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [dateRange, setDateRange] = useState([null, null]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const getProductDetail = async () => {
@@ -54,6 +58,42 @@ const RentDetail = () => {
   };
   const handleBack = () => {
     navigate("/");
+  };
+
+  const handleAddToCart = () => {
+    const today = new Date();
+    const startDate = new Date(dateRange[0]);
+    const endDate = new Date(dateRange[1]);
+
+    // Check if date is valid
+    if (startDate < today || endDate < today) {
+      notification.error({
+        message: "Invalid Date",
+        description: "Please select a valid date range.",
+        placement: "topRight",
+      });
+      return;
+    }
+
+    // Add product to cart
+    const cartProduct = {
+      productId: productDetail._id,
+      name: productDetail.name,
+      buyPrice: productDetail.buyPrice,
+      rentPrice: productDetail.rentPrice,
+      category: productDetail.category,
+      image: productDetail.image,
+      description: productDetail.description,
+      quantity,
+      dateRange: dateRange, // Add date range to cart
+    };
+
+    dispatch(addToCart(cartProduct)); // Dispatch action to add to cart
+    notification.success({
+      message: "Product Added",
+      description: "Product has been added to your cart.",
+      placement: "topRight",
+    });
   };
 
   const updatedRentPrice = productDetail.rentPrice * quantity;
@@ -160,7 +200,10 @@ const RentDetail = () => {
                           +
                         </button>
                       </Grid2>
-                      <button className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg transition duration-300 hover:bg-slate-800 md:ml-4 mt-2 md:mt-0">
+                      <button
+                        className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg transition duration-300 hover:bg-slate-800 md:ml-4 mt-2 md:mt-0"
+                        onClick={handleAddToCart}
+                      >
                         Add To Cart
                       </button>
                     </div>

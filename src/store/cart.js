@@ -20,7 +20,8 @@ const cartSlice = createSlice({
 
       if (existingItemIndex >= 0) {
         // Increase the quantity if the product already exists
-        state.items[existingItemIndex].quantity += 1;
+        state.items[existingItemIndex].quantity += product.quantity;
+        state.items[existingItemIndex].dateRange = product.dateRange;
       } else {
         // Add the product to the cart with quantity 1
         state.items.push({
@@ -37,6 +38,7 @@ const cartSlice = createSlice({
           description: product.description,
           type: product.type,
           quantity: 1, // Start with a default quantity of 1
+          dateRange: product.dateRange,
         });
       }
 

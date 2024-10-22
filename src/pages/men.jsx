@@ -13,7 +13,7 @@ const Men = () => {
   // Centered loader spinner
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen"> {/* Center the spinner */}
+      <div className="flex justify-center items-center h-screen">
         <Spin size="large" />
       </div>
     );
@@ -23,7 +23,12 @@ const Men = () => {
     return <div>Error fetching products!</div>;
   }
 
-  const menProducts = data?.data?.filter((product) => product.category === "Men");
+  // Filter for Men's products with completed approval status
+  const menProducts =
+    data?.data?.filter(
+      (product) =>
+        product.category === "Men" && product.approvalStatus === "completed"
+    ) || [];
 
   return (
     <div>
