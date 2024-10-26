@@ -5,7 +5,7 @@ import { handleLogin } from "../services/auth";
 import Colors from "../constants/Colors";
 // Importing eye icons (you can use any icon library, here I'm using FontAwesome)
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
+import { ROUTES } from "../constants/routes";
 
 function Login() {
   const [validated, setValidated] = useState(false);
@@ -21,12 +21,12 @@ function Login() {
     password: "",
   });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -42,7 +42,7 @@ function Login() {
         setModalMessage,
         setModalType,
         setShowModal,
-        navigate,
+        navigate
       );
     }
 
@@ -52,7 +52,7 @@ function Login() {
   const handleModalClose = () => {
     setShowModal(false);
     if (modalType === "success") {
-      navigate("/");
+      navigate(ROUTES.HOME);
     }
   };
 
@@ -131,7 +131,7 @@ function Login() {
               Don't have an account?{" "}
               <button
                 type="button"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate(ROUTES.SIGNUP)}
                 className="text-white  bg-green-700 p-2 rounded-md"
               >
                 Sign Up

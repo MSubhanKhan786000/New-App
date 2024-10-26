@@ -1,11 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../constants/routes";
 
 const NoAccess = () => {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate("/");
+    navigate(ROUTES.HOME);
   };
 
   return (

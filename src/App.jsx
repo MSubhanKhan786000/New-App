@@ -25,6 +25,11 @@ import SellerEarningsPage from "./pages/Seller/SellerEarningsPage";
 import PrivacyPolicy from "./pages/privacyPolicy";
 import Return from "./pages/return";
 import Shipping from "./pages/shipping";
+import Success from "./pages/success";
+import Cancel from "./pages/cancel";
+import { theme } from "./constants/theme";
+import { ThemeProvider } from "@mui/material";
+
 const queryClient = new QueryClient();
 
 function MainLayout() {
@@ -36,117 +41,121 @@ function MainLayout() {
 
   return (
     <>
-      <Header />
-      <Routes>
-        <Route path="/Login" element={<Login />} />
-        <Route path="/SignUp" element={<SignUp />} />
-        <Route
-          path="/"
-          element={
-            <PrivateRoutes allowedRoles={["USER"]}>
-              <Home />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/detail/:id"
-          element={
-            <PrivateRoutes allowedRoles={["USER"]}>
-              <Detail />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/earn"
-          element={
-            <PrivateRoutes allowedRoles={["SELLER"]}>
-              <Earn />
-            </PrivateRoutes>
-          }
-        />
-        <Route path="/Contact" element={<Contact />} />
-        <Route path="/About" element={<About />} />
-        <Route
-          path="/Women"
-          element={
-            <PrivateRoutes allowedRoles={["USER"]}>
-              <Women />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/Men"
-          element={
-            <PrivateRoutes allowedRoles={["USER"]}>
-              <Men />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/Products"
-          element={
-            <PrivateRoutes allowedRoles={["USER"]}>
-              <Products />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/cart"
-          element={
-            <PrivateRoutes allowedRoles={["USER"]}>
-              <CartTab />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/rentDetail/:id"
-          element={
-            <PrivateRoutes allowedRoles={["USER"]}>
-              <RentDetail />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoutes allowedRoles={["USER", "SELLER"]}>
-              <Profile />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoutes allowedRoles={["USER", "SELLER"]}>
-              <Seller />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/sellerProducts"
-          element={
-            <PrivateRoutes allowedRoles={["SELLER"]}>
-              <SellerProducts />
-            </PrivateRoutes>
-          }
-        />
-        <Route
-          path="/sellerEarnings"
-          element={
-            <PrivateRoutes allowedRoles={["SELLER"]}>
-              <SellerEarningsPage />
-            </PrivateRoutes>
-          }
-        />
-        <Route path="/private" element={<PrivateRoutes />} />
-        <Route path="/not-found" element={<NoAccess />} />{" "}
-        {/* Not Found Page */}
-        <Route path="/policy" element={<PrivacyPolicy />} />
-        <Route path="/return" element={<Return />} />
-        <Route path="/shipping" element={<Shipping />} />
-      </Routes>
+      <ThemeProvider theme={theme}>
+        <Header />
+        <Routes>
+          <Route path="/Login" element={<Login />} />
+          <Route path="/SignUp" element={<SignUp />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoutes allowedRoles={["USER"]}>
+                <Home />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/detail/:id"
+            element={
+              <PrivateRoutes allowedRoles={["USER"]}>
+                <Detail />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/earn"
+            element={
+              <PrivateRoutes allowedRoles={["SELLER"]}>
+                <Earn />
+              </PrivateRoutes>
+            }
+          />
+          <Route path="/Contact" element={<Contact />} />
+          <Route path="/About" element={<About />} />
+          <Route
+            path="/Women"
+            element={
+              <PrivateRoutes allowedRoles={["USER"]}>
+                <Women />
+              </PrivateRoutes>
+            }
+          />
+          <Route path="/success" element={<Success />} />
+          <Route path="/cancel" element={<Cancel />} />
+          <Route
+            path="/Men"
+            element={
+              <PrivateRoutes allowedRoles={["USER"]}>
+                <Men />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/Products"
+            element={
+              <PrivateRoutes allowedRoles={["USER"]}>
+                <Products />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <PrivateRoutes allowedRoles={["USER"]}>
+                <CartTab />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/rentDetail/:id"
+            element={
+              <PrivateRoutes allowedRoles={["USER"]}>
+                <RentDetail />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoutes allowedRoles={["USER", "SELLER"]}>
+                <Profile />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoutes allowedRoles={["USER", "SELLER"]}>
+                <Seller />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/sellerProducts"
+            element={
+              <PrivateRoutes allowedRoles={["SELLER"]}>
+                <SellerProducts />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/sellerEarnings"
+            element={
+              <PrivateRoutes allowedRoles={["SELLER"]}>
+                <SellerEarningsPage />
+              </PrivateRoutes>
+            }
+          />
+          <Route path="/private" element={<PrivateRoutes />} />
+          <Route path="/not-found" element={<NoAccess />} />{" "}
+          {/* Not Found Page */}
+          <Route path="/policy" element={<PrivacyPolicy />} />
+          <Route path="/return" element={<Return />} />
+          <Route path="/shipping" element={<Shipping />} />
+        </Routes>
 
-      {!noFooterRoutes.includes(currentPath) && <Footer />}
+        {!noFooterRoutes.includes(currentPath) && <Footer />}
+      </ThemeProvider>
     </>
   );
 }

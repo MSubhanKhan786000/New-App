@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import ProductCart from "../components/productCart";
 import { fetchProducts } from "../services/productService";
 import { useQuery } from "@tanstack/react-query";
-import { Spin } from "antd";
+import { Spin, Button } from "antd";
 import Hero from "../components/hero";
 
 const Home = () => {
@@ -10,6 +10,9 @@ const Home = () => {
     queryKey: ["products"],
     queryFn: fetchProducts,
   });
+
+  // State to keep track of visible products count
+  const [visibleCount, setVisibleCount] = useState(5);
 
   if (isLoading) {
     return (
@@ -30,22 +33,37 @@ const Home = () => {
     (product) => product.approvalStatus === "completed"
   );
 
+  // Show only the number of products defined by visibleCount
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+
+  // Function to handle Show More button click
+  const handleShowMore = () => {
+    setVisibleCount((prevCount) => prevCount + 5);
+  };
+
   return (
     <div>
       <Hero />
       <div className="bg-[#CCFDFF]">
         <p className="text-2xl font-bold text-center pt-4">Our Products</p>
         <p className="text-center md:text-center px-10 pt-2 text-gray">
-          Contemporary Pakistani Wedding dresses meticulously handicrafted with
+          Contemporary Pakistani Wedding dresses meticulously handcrafted with
           traditional embellishments and embroidery techniques inspired by the
           subcontinent's heritage. Each carefully crafted dress is designed to
-          complement brides' looks on her wedding day.
+          complement the bride's look on her wedding day.
         </p>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 flex justify-center ml-5 mr-5 px-20">
-          {filteredProducts.map((product) => (
+          {visibleProducts.map((product) => (
             <ProductCart key={product._id} data={product} />
           ))}
         </div>
+        {visibleCount < filteredProducts.length && (
+          <div className="flex items-center justify-center py-4">
+            <Button color="danger" variant="solid" onClick={handleShowMore}>
+              Show More
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

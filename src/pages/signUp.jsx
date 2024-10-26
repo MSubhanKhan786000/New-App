@@ -7,6 +7,7 @@ import CustomModal from "../components/common/CustomModal";
 import { useNavigate } from "react-router-dom";
 import Colors from "../constants/Colors";
 import { handleRegister } from "../services/auth";
+import { ROUTES } from "../constants/routes";
 
 function SignUp() {
   const [validated, setValidated] = useState(false);
@@ -121,7 +122,8 @@ function SignUp() {
                 onChange={handleChange}
               />
               <Form.Control.Feedback type="invalid">
-                Please enter a phone number in this format(3344567890) without 0.
+                Please enter a phone number in this format(3344567890) without
+                0.
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} md="6" controlId="email">
@@ -207,7 +209,7 @@ function SignUp() {
           </Button>
           <p className="mt-3 text-center">
             Already have an account?{" "}
-            <Button variant="success" onClick={() => navigate("/login")}>
+            <Button variant="success" onClick={() => navigate(ROUTES.LOGIN)}>
               Login
             </Button>
           </p>
@@ -221,7 +223,7 @@ function SignUp() {
             onClose={() => {
               setShowModal(false);
               if (modalType === "success") {
-                navigate("/login");
+                navigate(ROUTES.LOGIN);
               }
             }}
           />

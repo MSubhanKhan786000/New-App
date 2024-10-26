@@ -8,19 +8,21 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { TiShoppingCart } from "react-icons/ti";
 import profileIcon from "../assets/images/profile.png";
 import logo from "../assets/images/logo.png";
-// import "../styles/header.css";
 import { FiLogOut } from "react-icons/fi";
 import { Button } from "react-bootstrap";
 import { UserContext } from "../context/UserContext"; // Import UserContext
+import { getMenuItems } from "../services/common"; // Import the new service
+import { ROUTES } from "../constants/routes";
 
 const Header = () => {
   const [totalQuantity, setTotalQuantity] = useState(0);
+  const [menuItems, setMenuItems] = useState([]); // State to hold menu items as an array
   const carts = useSelector((store) => store.cart.items);
   const navigate = useNavigate();
   const { userInfo } = useContext(UserContext); // Get userInfo from UserContext
 
   const handleCartClick = () => {
-    navigate("/cart");
+    navigate(ROUTES.CART);
   };
 
   useEffect(() => {
@@ -29,8 +31,28 @@ const Header = () => {
     setTotalQuantity(total);
   }, [carts]);
 
+  // Fetch menu items on component mount
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const response = await getMenuItems();
+        if (response && Array.isArray(response.data)) {
+          setMenuItems(response.data); // Set fetched menu items if it's an array
+        } else {
+          console.error("Fetched menu items is not an array:", response.data);
+          setMenuItems([]); // Reset to an empty array if not
+        }
+      } catch (error) {
+        console.error("Failed to fetch menu items:", error);
+        setMenuItems([]); // Reset to an empty array on error
+      }
+    };
+
+    fetchMenuItems();
+  }, []);
+
   const handleEarnWithUsClick = () => {
-    navigate("/earn");
+    navigate(ROUTES.EARN);
   };
 
   const handleLogout = () => {
@@ -39,13 +61,13 @@ const Header = () => {
   };
 
   const handleProfile = () => {
-    navigate("/profile");
+    navigate(ROUTES.PROFILE);
   };
 
   return (
     <Navbar expand="lg" className="bg-header-bg">
       <Container>
-        <Navbar.Brand onClick={() => navigate("/")}>
+        <Navbar.Brand onClick={() => navigate(ROUTES.HOME)}>
           <img
             src={logo}
             alt="Logo"
@@ -58,57 +80,75 @@ const Header = () => {
             {/* Conditional rendering based on user role */}
             {userInfo?.role === "user" ? (
               <>
-                <NavLink className="ms-2 nav-link" as={Link} to="/">
+                <NavLink className="ms-2 nav-link" as={Link} to={ROUTES.HOME}>
                   Home
                 </NavLink>
-                <NavLink className="ms-2 nav-link" as={Link} to="/products">
+                <NavLink
+                  className="ms-2 nav-link"
+                  as={Link}
+                  to={ROUTES.PRODUCTS}
+                >
                   Products
                 </NavLink>
                 <NavLink
                   className="ms-2 nav-link"
                   as={Link}
-                  to="/about"
-                  style={{ whiteSpace: "nowrap" }}
+                  to={ROUTES.ABOUT_US}
                 >
                   About Us
                 </NavLink>
                 <NavLink
                   className="ms-2 nav-link"
                   as={Link}
-                  to="/contact"
-                  style={{ whiteSpace: "nowrap" }}
+                  to={ROUTES.CONTACT_US}
                 >
                   Contact Us
                 </NavLink>
 
                 <NavDropdown title="Men" id="men-nav-dropdown">
-                  <NavDropdown.Item as={Link} to="/men">
-                    Barat
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/men">
-                    Mehndi
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/men">
-                    Walima
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/men">
+                  <NavDropdown.Item as={Link} to={ROUTES.MEN}>
                     Nikkah
                   </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to={ROUTES.MEN}>
+                    Rasm
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to={ROUTES.MEN}>
+                    Mehndi
+                  </NavDropdown.Item>
+                  {menuItems
+                    .filter((item) => item.category === "Men") // Filter for Men category
+                    .map((item) => (
+                      <NavDropdown.Item
+                        key={item._id}
+                        as={Link}
+                        to={ROUTES.MEN}
+                      >
+                        {item.name}
+                      </NavDropdown.Item>
+                    ))}
                 </NavDropdown>
 
                 <NavDropdown title="Women" id="women-nav-dropdown">
-                  <NavDropdown.Item as={Link} to="/women">
-                    Barat
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/women">
-                    Mehndi
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/women">
-                    Walima
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/women">
+                  <NavDropdown.Item as={Link} to={ROUTES.WOMEN}>
                     Nikkah
                   </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to={ROUTES.WOMEN}>
+                    Rasm
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to={ROUTES.WOMEN}>
+                    Mehndi
+                  </NavDropdown.Item>
+                  {menuItems
+                    .filter((item) => item.category === "Women") // Filter for Women category
+                    .map((item) => (
+                      <NavDropdown.Item
+                        key={item._id}
+                        as={Link}
+                        to={ROUTES.WOMEN}
+                      >
+                        {item.name}
+                      </NavDropdown.Item>
+                    ))}
                 </NavDropdown>
 
                 <Button
@@ -116,7 +156,7 @@ const Header = () => {
                   className="text-white ml-9 no-wrap"
                   style={{ whiteSpace: "nowrap", padding: "-2px 8px" }}
                   onClick={() => {
-                    navigate("/signup"); // Navigate to signup
+                    navigate(ROUTES.SIGNUP); // Navigate to signup
                     localStorage.removeItem("userId"); // Remove userId from localStorage
                   }}
                 >
@@ -128,21 +168,29 @@ const Header = () => {
                 <NavLink
                   className="ms-2 nav-link"
                   as={Link}
-                  to="/sellerProducts"
+                  to={ROUTES.SELLER_PRODUCTS}
                 >
                   Products
                 </NavLink>
                 <NavLink
                   className="ms-2 nav-link"
                   as={Link}
-                  to="/sellerEarnings"
+                  to={ROUTES.SELLER_EARNINGS}
                 >
                   Earnings
                 </NavLink>
-                <NavLink className="ms-2 nav-link" as={Link} to="/about">
+                <NavLink
+                  className="ms-2 nav-link"
+                  as={Link}
+                  to={ROUTES.ABOUT_US}
+                >
                   About Us
                 </NavLink>
-                <NavLink className="ms-2 nav-link" as={Link} to="/contact">
+                <NavLink
+                  className="ms-2 nav-link"
+                  as={Link}
+                  to={ROUTES.CONTACT_US}
+                >
                   Contact Us
                 </NavLink>
 

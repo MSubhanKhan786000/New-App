@@ -83,11 +83,11 @@ const SellerEarningsPage = () => {
               <div className="mt-4">
                 {product.isRented ? (
                   <p className="text-gray-900">
-                    Rent Price: ${product.rentPrice} / day
+                    Rent Price: Rs. {product.rentPrice} / day
                   </p>
                 ) : (
                   <p className="text-gray-900">
-                    Buy Price: ${product.buyPrice}
+                    Buy Price: Rs.{product.buyPrice}
                   </p>
                 )}
               </div>
@@ -98,7 +98,7 @@ const SellerEarningsPage = () => {
               )}
             </div>
             <div className="bg-gray-200 p-4 text-gray-900">
-              Total Earned: $
+              Total Earned: Rs.
               {product.isRented
                 ? product.rentPrice * product.daysRented
                 : product.buyPrice}
@@ -111,7 +111,7 @@ const SellerEarningsPage = () => {
       <div className="mt-10 bg-white p-6 shadow-md rounded-lg max-w-lg mx-auto">
         <h3 className="text-xl font-semibold text-center">Total Earnings</h3>
         <p className="text-center text-2xl font-bold text-gray-900 mt-4">
-          ${totalEarnings}
+          Rs. {totalEarnings}
         </p>
       </div>
     </div>

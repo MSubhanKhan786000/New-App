@@ -78,12 +78,12 @@ function ProductGrid() {
                 <div className="flex gap-2">
                   {product.buyPrice > 0 && (
                     <p className="text-xs text-grey-800">
-                      Buy: ${product.buyPrice}
+                      Buy: Rs.{product.buyPrice}
                     </p>
                   )}
                   {product.rentPrice > 0 && (
                     <p className="text-xs text-grey-800">
-                      Rent: ${product.rentPrice}/day
+                      Rent: Rs. {product.rentPrice}/day
                     </p>
                   )}
                 </div>

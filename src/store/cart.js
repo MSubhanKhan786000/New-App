@@ -15,31 +15,14 @@ const cartSlice = createSlice({
       const product = action.payload;
 
       const existingItemIndex = state.items.findIndex(
-        (item) => item.productId === product.productId // Change from product._id to product.productId
+        (item) => item.productId === product._id // Change from product._id to product.productId
       );
 
       if (existingItemIndex >= 0) {
-        // Increase the quantity if the product already exists
         state.items[existingItemIndex].quantity += product.quantity;
         state.items[existingItemIndex].dateRange = product.dateRange;
       } else {
-        // Add the product to the cart with quantity 1
-        state.items.push({
-          productId: product._id,
-          name: product.name,
-          buyPrice: product.buyPrice,
-          rentPrice: product.rentPrice,
-          category: product.category,
-          status: product.status,
-          image: product.image,
-          buyStatus: product.buyStatus,
-          rentStatus: product.rentStatus,
-          createdAt: product.createdAt,
-          description: product.description,
-          type: product.type,
-          quantity: 1, // Start with a default quantity of 1
-          dateRange: product.dateRange,
-        });
+        state.items.push(product);
       }
 
       // Store the updated cart in localStorage
@@ -68,8 +51,13 @@ const cartSlice = createSlice({
     toggleStatusTab(state) {
       state.statusTab = !state.statusTab;
     },
+    clearCart(state) {
+      state.items = [];
+      localStorage.removeItem("carts");
+    },
   },
 });
 
-export const { addToCart, changeQuantity, toggleStatusTab } = cartSlice.actions;
+export const { addToCart, changeQuantity, toggleStatusTab, clearCart } =
+  cartSlice.actions;
 export default cartSlice.reducer;

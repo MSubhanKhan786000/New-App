@@ -13,7 +13,6 @@ export const getUserDetails = async () => {
     const response = await axios.get(`${API_BASE_URL}/user/${userId}`);
 
     if (response && response.data) {
-      console.log("User details fetched: ", response.data);
       return response.data;
     } else {
       throw new Error("No user details found.");
@@ -44,6 +43,21 @@ export const getSellerProducts = async () => {
     }
   } catch (error) {
     console.error("Error fetching seller products:", error);
+    throw error;
+  }
+};
+
+export const getMenuItems = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/getMenu`);
+
+    if (response && response.data) {
+      return response.data; // Assuming the response is an array of menu items
+    } else {
+      throw new Error("No menu items found.");
+    }
+  } catch (error) {
+    console.error("Error fetching menu items:", error);
     throw error;
   }
 };

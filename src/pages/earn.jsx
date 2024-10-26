@@ -354,6 +354,7 @@ function Earn() {
                     <Form.Control
                       type="file"
                       name="file"
+                      multiple={true}
                       onChange={(event) => {
                         setFieldValue("file", event.currentTarget.files[0]);
                       }}

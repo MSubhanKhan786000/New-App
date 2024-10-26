@@ -14,13 +14,14 @@ import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDa
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Grid2, Typography } from "@mui/material";
-import { notification } from "antd"; // Import Ant Design notification
+import { notification, Tag } from "antd"; // Import Ant Design notification
 import { addToCart } from "../store/cart";
 import { useDispatch } from "react-redux";
+import { ROUTES } from "../constants/routes";
 
 const RentDetail = () => {
   const { id } = useParams();
-  const [productDetail, setProductDetail] = useState(null);
+  const [detail, setdetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [dateRange, setDateRange] = useState([null, null]);
@@ -28,44 +29,42 @@ const RentDetail = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getProductDetail = async () => {
+    const getdetail = async () => {
       try {
         const product = await fetchProductById(id);
-        setProductDetail(product);
+        setdetail(product);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching product details:", error);
         setLoading(false);
       }
     };
-    getProductDetail();
+    getdetail();
   }, [id]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (!productDetail) {
+  if (!detail) {
     return <div>Product not found.</div>;
   }
-
-  const handleMinusQuantity = () => {
-    setQuantity(quantity - 1 < 1 ? 1 : quantity - 1);
-  };
-
-  const handlePlusQuantity = () => {
-    setQuantity(quantity + 1);
-  };
   const handleBack = () => {
-    navigate("/");
+    navigate(ROUTES.HOME);
   };
 
   const handleAddToCart = () => {
     const today = new Date();
     const startDate = new Date(dateRange[0]);
     const endDate = new Date(dateRange[1]);
-
-    // Check if date is valid
+    if (detail.quantity === 0) {
+      notification.error({
+        message: "Sorry",
+        description: "Item will be available for purchase soon",
+        placement: "topRight",
+      });
+      return;
+    }
     if (startDate < today || endDate < today) {
       notification.error({
         message: "Invalid Date",
@@ -77,13 +76,13 @@ const RentDetail = () => {
 
     // Add product to cart
     const cartProduct = {
-      productId: productDetail._id,
-      name: productDetail.name,
-      buyPrice: productDetail.buyPrice,
-      rentPrice: productDetail.rentPrice,
-      category: productDetail.category,
-      image: productDetail.image,
-      description: productDetail.description,
+      productId: detail._id, // Correct property name for the ID
+      name: detail.name,
+      buyPrice: detail.buyPrice,
+      rentPrice: detail.rentPrice,
+      category: detail.category,
+      image: detail.image,
+      description: detail.description,
       quantity,
       dateRange: dateRange, // Add date range to cart
     };
@@ -94,9 +93,10 @@ const RentDetail = () => {
       description: "Product has been added to your cart.",
       placement: "topRight",
     });
+    console.log("This is product id from rent", cartProduct.productId);
   };
 
-  const updatedRentPrice = productDetail.rentPrice * quantity;
+  const updatedRentPrice = detail.rentPrice * quantity;
 
   return (
     <>
@@ -126,8 +126,8 @@ const RentDetail = () => {
                 <MDBRow className="mt-5">
                   <MDBCol lg="6" className="flex justify-center">
                     <img
-                      src={productDetail.image}
-                      alt={productDetail.name}
+                      src={detail.image}
+                      alt={detail.name}
                       className="w-[500px] rounded-lg shadow-lg"
                     />
                   </MDBCol>
@@ -143,23 +143,35 @@ const RentDetail = () => {
                       }}
                     >
                       <h3 className="text-4xl uppercase font-bold mb-3">
-                        {productDetail.name}
+                        {detail.name}
                       </h3>
                       <RatingComponent />
                     </div>
+                    <Tag
+                      color="#f50"
+                      className="text-center w-[100px] mb-1 pt-1 font-bold"
+                    >
+                      {detail.quantity == 0 ? (
+                        <p className="pt-2 text-lg">Sold 😔</p>
+                      ) : (
+                        <p className="text-justify w-[100px] mb-1 pt-1 font-bold">
+                          Items Left: {detail.quantity}
+                        </p>
+                      )}
+                    </Tag>
                     <Typography
                       sx={{
-                        fontSize: "1rem",
+                        fontSize: "0.9rem",
                         color: "white",
                         backgroundColor: "green",
                         padding: "0.5rem",
                         borderRadius: "5px",
                         mb: 4,
-                        width: "20%",
-                        textAlign: "center",
+                        width: "25%",
+                        textAlign: "left",
                       }}
                     >
-                      ${updatedRentPrice}/day
+                      Rs. {updatedRentPrice}/day
                     </Typography>
 
                     <Typography
@@ -183,32 +195,15 @@ const RentDetail = () => {
                     </LocalizationProvider>
 
                     <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
-                      <Grid2 className="flex mt-2 gap-2 items-center">
-                        <button
-                          className="bg-gray-200 h-8 w-8 font-bold text-lg rounded-lg flex justify-center items-center transition duration-300 hover:bg-gray-300"
-                          onClick={handleMinusQuantity}
-                        >
-                          -
-                        </button>
-                        <span className="bg-gray-100 h-8 w-8 font-bold text-lg rounded-lg flex justify-center items-center">
-                          {quantity}
-                        </span>
-                        <button
-                          className="bg-gray-200 h-8 w-8 font-bold text-lg rounded-lg flex justify-center items-center transition duration-300 hover:bg-gray-300"
-                          onClick={handlePlusQuantity}
-                        >
-                          +
-                        </button>
-                      </Grid2>
                       <button
-                        className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg transition duration-300 hover:bg-slate-800 md:ml-4 mt-2 md:mt-0"
+                        className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg transition duration-300 hover:bg-slate-800  mt-2 md:mt-0"
                         onClick={handleAddToCart}
                       >
                         Add To Cart
                       </button>
                     </div>
                     <p className="text-gray-700 text-sm mb-4">
-                      {productDetail.description}
+                      {detail.description}
                     </p>
                   </MDBCol>
                 </MDBRow>

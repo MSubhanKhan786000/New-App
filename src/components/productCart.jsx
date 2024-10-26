@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal, message, Button } from "antd";
 import { addToCart } from "../store/cart";
+import { ROUTES } from "../constants/routes";
 
 const ProductCart = (props) => {
   const carts = useSelector((store) => store.cart.items);
@@ -15,19 +16,17 @@ const ProductCart = (props) => {
     buyPrice,
     rentPrice,
     image,
-    quantity, // Make sure quantity is passed from the parent component
+    quantity, // Ensure quantity is passed from the parent component
   } = props.data;
 
-  // Check if the product is in the cart
   const cartItem = carts.find((item) => item.productId === _id);
   const cartQuantity = cartItem ? cartItem.quantity : 0; // Get the quantity from the cart or 0 if not present
 
-  // Function to handle adding product to cart after confirmation
   const handleAddToCart = () => {
     const availableQuantity = quantity - cartQuantity; // Calculate available quantity
 
     if (availableQuantity <= 0) {
-      message.error("Product is out of stock. Will be coming soon.");
+      message.error("Product is out of stock. Will be available soon.");
       return;
     }
 
@@ -38,21 +37,24 @@ const ProductCart = (props) => {
         buyPrice,
         rentPrice,
         image,
+        quantity: 1,
       })
     );
+    console.log("product id from product Cart", _id);
+
     message.success("Item added to cart successfully");
   };
 
   const showConfirm = () => {
-    const availableQuantity = quantity - cartQuantity; // Calculate available quantity
+    const availableQuantity = quantity - cartQuantity;
 
     if (availableQuantity <= 0) {
-      message.error("Product is out of stock. Will be coming soon.");
+      message.error("Product is out of stock. Will be available soon.");
       return;
     }
 
     Modal.confirm({
-      title: "Are you sure to add the product to cart for purchase?",
+      title: "Are you sure you want to add the product to your cart?",
       okText: "Yes",
       cancelText: "No",
       onOk() {
@@ -65,15 +67,19 @@ const ProductCart = (props) => {
   };
 
   const handleRentClick = () => {
-    if (!rentPrice || isNaN(rentPrice)) {
-      navigate("/not-found");
+    if (quantity <= 0) {
+      message.error("Product is out of stock. Will be available soon.");
+    } else if (!rentPrice || isNaN(rentPrice)) {
+      navigate(ROUTES.NOT_FOUND);
     } else {
       navigate(`/rentDetail/${_id}`);
     }
   };
 
   const handleBuyClick = () => {
-    if (buyPrice === "0") {
+    if (quantity <= 0) {
+      message.error("Product is out of stock. Will be available soon.");
+    } else if (buyPrice === "0") {
       navigate(`/rentDetail/${_id}`);
     } else {
       navigate(`/detail/${_id}`);
@@ -100,10 +106,10 @@ const ProductCart = (props) => {
 
       <div className="flex gap-2 px-2">
         {buyPrice && buyPrice > 0 && (
-          <p className="text-xs text-grey-800">Buy: ${buyPrice}</p>
+          <p className="text-xs text-grey-800">Buy: Rs. {buyPrice}</p>
         )}
         {rentPrice && rentPrice > 0 && (
-          <p className="text-xs text-grey-800">Rent: ${rentPrice}/day</p>
+          <p className="text-xs text-grey-800">Rent: Rs. {rentPrice}/day</p>
         )}
       </div>
 

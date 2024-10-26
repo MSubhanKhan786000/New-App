@@ -3,18 +3,19 @@ import ProductCart from "../components/productCart";
 import { fetchProducts } from "../services/productService";
 import { useQuery } from "@tanstack/react-query";
 import Filter from "../components/filter";
-import { Spin } from "antd"; // Import Ant Design spinner
+import { Spin } from "antd";
+import Pagination from "@mui/material/Pagination";
 
 const Products = () => {
   const { data, error, isLoading } = useQuery({
     queryKey: ["products"],
     queryFn: fetchProducts,
   });
-  console.log("data from products page", data);
 
-  const [filter, setFilter] = useState(null); // Track selected filter
+  const [filter, setFilter] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 7;
 
-  // Centered loader spinner
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -29,19 +30,14 @@ const Products = () => {
 
   const allProducts = data?.data || [];
 
-  // Function to handle filtering logic
   const filteredProducts = () => {
-    // Filter products to only show those with approvalStatus === "completed"
     const approvedProducts = allProducts.filter(
       (product) => product.approvalStatus === "completed"
     );
 
     if (!filter) return approvedProducts;
 
-    const normalizePrice = (price) => {
-      // Convert to number and handle edge cases
-      return Number(price) || 0; // Returns 0 if price is null, undefined, or "0"
-    };
+    const normalizePrice = (price) => Number(price) || 0;
 
     switch (filter) {
       case "rentLow":
@@ -65,14 +61,35 @@ const Products = () => {
     }
   };
 
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  // Get the current products based on the current page
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const currentProducts = filteredProducts().slice(
+    startIndex,
+    startIndex + productsPerPage
+  );
+
   return (
     <div>
       <Filter onFilterChange={setFilter} />
 
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 flex justify-center ml-5 mr-5">
-        {filteredProducts().map((product) => (
+        {currentProducts.map((product) => (
           <ProductCart key={product._id} data={product} />
         ))}
+      </div>
+      <div className="flex items-center justify-center py-4">
+        <Pagination
+          color="standard"
+          count={Math.ceil(filteredProducts().length / productsPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          variant="outlined"
+          shape="rounded"
+        />
       </div>
     </div>
   );

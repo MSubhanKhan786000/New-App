@@ -12,16 +12,14 @@ import {
   MDBCardBody,
 } from "mdb-react-ui-kit";
 import RatingComponent from "../components/rating";
-import { CheckCircleTwoTone } from "@ant-design/icons";
-import { notification, Tag } from "antd";
+import { notification, Tag, Modal } from "antd";
+import { ROUTES } from "../constants/routes";
+
+const { confirm } = Modal;
 
 const Detail = () => {
   const { id } = useParams();
   const [detail, setDetail] = useState({});
-  console.log("----------", detail);
-
-  console.log("These are details of product", detail);
-
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -30,38 +28,44 @@ const Detail = () => {
     const getProductDetails = async () => {
       try {
         const response = await fetchProductById(id);
-
         setDetail(response);
       } catch (error) {
         console.error("Error fetching product details:", error);
-        navigate("/");
+        navigate(ROUTES.HOME);
       }
     };
     getProductDetails();
   }, [id, navigate]);
 
-  const handleMinusQuantity = () => {
-    setQuantity(quantity - 1 < 1 ? 1 : quantity - 1);
+  const cartItems = useSelector((state) => state.cart.items);
+  console.log("Cart tems id check", cartItems);
+
+  // Function to handle the confirmation alert
+  const showConfirm = () => {
+    confirm({
+      title: "Do you want to add this item to the cart?",
+      content: `You are about to add ${detail.name} to your cart.`,
+      onOk() {
+        handleAddToCartConfirmed();
+      },
+      onCancel() {
+        console.log("Add to cart cancelled");
+      },
+    });
   };
 
-  const handlePlusQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-  const cartItems = useSelector((state) => state.cart.items);
-  const handleAddToCart = () => {
+  // Function to handle adding the item to the cart after confirmation
+  const handleAddToCartConfirmed = () => {
     if (detail.quantity === 0) {
-      // Show notification when item is out of stock
       notification.error({
         message: "Sorry",
         description: "Item will be available for purchase soon",
         placement: "topRight",
       });
-      return; // Exit the function since the item is unavailable
+      return;
     }
 
     if (detail && detail._id) {
-      console.log("Adding product to cart:", detail._id);
-
       const existingProduct = cartItems.find(
         (item) => item.productId === detail._id
       );
@@ -88,13 +92,18 @@ const Detail = () => {
           })
         );
       }
+      notification.success({
+        message: "Added to Cart",
+        description: `${detail.name} has been added to your cart.`,
+        placement: "topRight",
+      });
     } else {
       console.error("Product ID is missing!");
     }
   };
 
   const handleBack = () => {
-    navigate("/");
+    navigate(ROUTES.HOME);
   };
 
   if (!detail) {
@@ -168,38 +177,19 @@ const Detail = () => {
                       <RatingComponent />
                     </div>
                     <p className="font-bold text-3xl text-green-600 mb-4">
-                      ${detail.buyPrice}
+                      Rs. {detail.buyPrice}
                     </p>
-                    {/* <CheckCircleTwoTone twoToneColor="#52c41a" /> */}
                     <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
-                      <div className="flex gap-2 items-center">
-                        <button
-                          className="bg-gray-200 h-8 w-8 font-bold text-lg rounded-lg flex justify-center items-center transition duration-300 hover:bg-gray-300"
-                          onClick={handleMinusQuantity}
-                        >
-                          -
-                        </button>
-                        <span className="bg-gray-100 h-8 w-8 font-bold text-lg rounded-lg flex justify-center items-center">
-                          {quantity}
-                        </span>
-                        <button
-                          className="bg-gray-200 h-8 w-8 font-bold text-lg rounded-lg flex justify-center items-center transition duration-300 hover:bg-gray-300"
-                          onClick={handlePlusQuantity}
-                        >
-                          +
-                        </button>
-                      </div>
                       <button
-                        className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg transition duration-300 hover:bg-slate-800 md:ml-4 mt-2 md:mt-0"
-                        onClick={handleAddToCart}
+                        className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg transition duration-300 hover:bg-slate-800  mt-2 md:mt-0"
+                        onClick={showConfirm} // Call confirmation modal on button click
                       >
                         Add To Cart
                       </button>
                     </div>
                     <p className="text-gray-700 text-sm mb-4">
                       {detail.description}
-                    </p>{" "}
-                    {/* Adjusted text size */}
+                    </p>
                   </MDBCol>
                 </MDBRow>
               </MDBCardBody>
