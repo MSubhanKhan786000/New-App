@@ -24,8 +24,6 @@ const cartSlice = createSlice({
       } else {
         state.items.push(product);
       }
-
-      // Store the updated cart in localStorage
       localStorage.setItem("carts", JSON.stringify(state.items));
     },
 

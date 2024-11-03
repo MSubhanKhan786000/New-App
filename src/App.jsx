@@ -29,6 +29,7 @@ import Success from "./pages/success";
 import Cancel from "./pages/cancel";
 import { theme } from "./constants/theme";
 import { ThemeProvider } from "@mui/material";
+import ComingSoon from "./pages/coming";
 
 const queryClient = new QueryClient();
 
@@ -70,7 +71,19 @@ function MainLayout() {
               </PrivateRoutes>
             }
           />
-          <Route path="/Contact" element={<Contact />} />
+          <Route
+            path="/coming"
+            element={
+              <PrivateRoutes allowedRoles={["USER","SELLER"]}>
+                <ComingSoon />
+              </PrivateRoutes>
+            }
+          />
+          <Route path="/Contact" element={
+              <PrivateRoutes allowedRoles={["SELLER"]}>
+                <Contact />
+              </PrivateRoutes>
+            } />
           <Route path="/About" element={<About />} />
           <Route
             path="/Women"

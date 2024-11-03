@@ -14,10 +14,11 @@ import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDa
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Grid2, Typography } from "@mui/material";
-import { notification, Tag } from "antd"; // Import Ant Design notification
+import { notification, Tag } from "antd"; 
 import { addToCart } from "../store/cart";
 import { useDispatch } from "react-redux";
 import { ROUTES } from "../constants/routes";
+import { Button } from "react-bootstrap";
 
 const RentDetail = () => {
   const { id } = useParams();
@@ -195,12 +196,20 @@ const RentDetail = () => {
                     </LocalizationProvider>
 
                     <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
-                      <button
+                      {/* <button
                         className="bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg transition duration-300 hover:bg-slate-800  mt-2 md:mt-0"
                         onClick={handleAddToCart}
                       >
                         Add To Cart
-                      </button>
+                      </button> */}
+                      <Button
+                  variant="danger"
+                  className="text-white px-4 py-2 mt-3 no-wrap"
+                  style={{ whiteSpace: "nowrap", padding: "-2px 8px" }}
+                  onClick={handleAddToCart}
+                >
+                  Add to Cart
+                </Button>
                     </div>
                     <p className="text-gray-700 text-sm mb-4">
                       {detail.description}

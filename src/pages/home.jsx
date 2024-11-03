@@ -4,12 +4,16 @@ import { fetchProducts } from "../services/productService";
 import { useQuery } from "@tanstack/react-query";
 import { Spin, Button } from "antd";
 import Hero from "../components/hero";
+import Reviews from "../components/Reviews";
 
 const Home = () => {
   const { data, error, isLoading } = useQuery({
     queryKey: ["products"],
     queryFn: fetchProducts,
   });
+
+  console.log(data);
+  
 
   // State to keep track of visible products count
   const [visibleCount, setVisibleCount] = useState(5);
@@ -64,6 +68,9 @@ const Home = () => {
             </Button>
           </div>
         )}
+        <div className="pt-10 pb-10">
+          <Reviews />
+        </div>
       </div>
     </div>
   );

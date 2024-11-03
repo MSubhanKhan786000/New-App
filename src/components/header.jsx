@@ -97,13 +97,7 @@ const Header = () => {
                 >
                   About Us
                 </NavLink>
-                <NavLink
-                  className="ms-2 nav-link"
-                  as={Link}
-                  to={ROUTES.CONTACT_US}
-                >
-                  Contact Us
-                </NavLink>
+                
 
                 <NavDropdown title="Men" id="men-nav-dropdown">
                   <NavDropdown.Item as={Link} to={ROUTES.MEN}>
@@ -156,8 +150,8 @@ const Header = () => {
                   className="text-white ml-9 no-wrap"
                   style={{ whiteSpace: "nowrap", padding: "-2px 8px" }}
                   onClick={() => {
-                    navigate(ROUTES.SIGNUP); // Navigate to signup
-                    localStorage.removeItem("userId"); // Remove userId from localStorage
+                    navigate(ROUTES.SIGNUP); 
+                    localStorage.removeItem("userId");
                   }}
                 >
                   Become Seller

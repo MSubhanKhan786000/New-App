@@ -1,7 +1,13 @@
 import React from "react";
 import HeroImg from "../assets/images/image.png";
+import { useNavigate } from "react-router-dom";
+
 import { Button } from "react-bootstrap";
 function Hero() {
+  const navigate = useNavigate();
+  const handleBrowseCatalog = () => {
+    navigate("/coming"); // Navigate to the /coming route
+  };
   return (
     <div className="bg-bg">
       <div className="grid grid-cols-1 md:grid-cols-2">
@@ -18,7 +24,11 @@ function Hero() {
             Elevate your special day with our exquisite wedding dress rentals,
             offering timeless elegance and unforgettable style for every bride.
           </p>
-          <Button variant="danger" className="mt-3">
+          <Button
+            variant="danger"
+            className="mt-3"
+            onClick={handleBrowseCatalog}
+          >
             Browse Catalog
           </Button>
           <p className="text-sm text-red-700">

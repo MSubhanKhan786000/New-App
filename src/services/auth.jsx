@@ -20,7 +20,7 @@ export const handleRegister = async (
     console.log("Full response:", response); // Log the full response
 
     // Check if the response has a success message
-    if (response.data.message === "User created successfully") {
+    if (response.message === "User created successfully") {
       setModalMessage(
         "Sign Up Successfully. Click Ok to navigate to the Login Screen."
       );
