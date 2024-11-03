@@ -26,7 +26,7 @@ function Contact() {
 
   const handleSubmit = async (values, resetForm) => {
     setLoading(true);
-
+  
     // Open confirmation modal
     Modal.confirm({
       title: "Confirm Submission",
@@ -48,7 +48,7 @@ function Contact() {
               },
             }
           );
-
+  
           console.log("Response:", response.data);
           message.success(
             "Your request has been submitted successfully! Your representative will contact you in 24 hrs"
@@ -56,7 +56,12 @@ function Contact() {
           resetForm(); // Reset form fields after successful submission
         } catch (error) {
           console.error("Error:", error);
-          message.error("Something went wrong. Please try again later.");
+          // Check if the error response contains the specific message about the email already existing
+          if (error.response && error.response.data.message === "Email already exists") {
+            message.error("Email already exists.");
+          } else {
+            message.error("Something went wrong. Please try again later.");
+          }
         } finally {
           setLoading(false);
         }
@@ -65,9 +70,10 @@ function Contact() {
         // Handle cancellation if needed
       },
     });
-
+  
     setLoading(false); // Reset loading state after the submission attempt
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-5">

@@ -15,7 +15,6 @@ export default function CartTab() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Calculate the total price based on either buyPrice or rentPrice
   const calculateTotal = (cartItem) => {
     if (cartItem.buyPrice === "0") {
       return cartItem.rentPrice * cartItem.quantity;
@@ -52,26 +51,14 @@ export default function CartTab() {
     message.success("Cart item deleted successfully");
   };
 
+  // Show message when user tries to decrease quantity
   const handleDecreaseQuantity = (cartItem) => {
-    if (cartItem.quantity <= 1) {
-      message.error("The item quantity is at its lowest.");
-    } else {
-      dispatch(
-        changeQuantity({
-          productId: cartItem.productId,
-          quantity: cartItem.quantity - 1,
-        })
-      );
-    }
+    message.info("Quantity is fixed");
   };
 
+  // Show message when user tries to increase quantity
   const handleIncreaseQuantity = (cartItem) => {
-    dispatch(
-      changeQuantity({
-        productId: cartItem.productId,
-        quantity: cartItem.quantity + 1,
-      })
-    );
+    message.info("Quantity is fixed");
   };
 
   // Format the dateRange to MM-DD-YYYY format
@@ -179,10 +166,10 @@ export default function CartTab() {
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center gap-6">
+                <div className="flex justify-between items-center gap-6 mt-4 lg:mt-0">
                   <div className="flex items-center">
                     <button
-                      className="px-6 py-2 border rounded-l-full"
+                      className="px-6 py-2 border rounded-l-full text-gray-500 cursor-not-allowed"
                       onClick={() => handleDecreaseQuantity(cartItem)}
                     >
                       -
@@ -194,7 +181,7 @@ export default function CartTab() {
                       readOnly
                     />
                     <button
-                      className="px-6 py-2 border rounded-r-full"
+                      className="px-6 py-2 border rounded-r-full text-gray-500 cursor-not-allowed"
                       onClick={() => handleIncreaseQuantity(cartItem)}
                     >
                       +

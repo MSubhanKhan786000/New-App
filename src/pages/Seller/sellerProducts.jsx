@@ -31,7 +31,6 @@ function ProductGrid() {
     <>
       <div className="bg-bg">
         <div className="grid grid-cols-1 md:grid-cols-2">
-          {/* div for text on left */}
           <div
             className="
          flex flex-col justify-center items-center text-left md:text-left px-10 py-20 md:py-0 md-px-0 md:items-start
@@ -50,7 +49,6 @@ function ProductGrid() {
               Start selling today and let your creations shine!
             </p>
           </div>
-          {/* div for image on right */}
           <div className="">
             <img
               src={HeroImg}
@@ -90,15 +88,12 @@ function ProductGrid() {
                 <div className="flex gap-2 mt-2">
                   <p>Status:</p>
                   {product.approvalStatus === "pending" && (
-                    // <Chip color="indigo" value={product.approvalStatus} />
                     <Chip label={product.approvalStatus} color="warning" />
                   )}
                   {product.approvalStatus === "completed" && (
-                    // <Chip color="green" value={product.approvalStatus} />
                     <Chip label={product.approvalStatus} color="success" />
                   )}
                   {product.approvalStatus === "rejected" && (
-                    // <Chip color="red" value={product.approvalStatus} />
                     <Chip label={product.approvalStatus} color="error" />
                   )}
                 </div>
