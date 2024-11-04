@@ -1,5 +1,23 @@
 import axiosInstance from "../utils/axiosInstance";
 
+// verify email endpoint
+export const verifyEmail = async (code) => {
+  try {
+    const response = await axiosInstance.post("/verifyEmail", { code }, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("Internal server error");
+    }
+  }
+};
+
 export const handleRegister = async (
   formData,
   setLoading,
@@ -11,7 +29,7 @@ export const handleRegister = async (
 
   try {
     setLoading(true);
-    const response = await axiosInstance.post("/singginupp", formData, {
+    const response = await axiosInstance.post("/signUp", formData, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -22,7 +40,7 @@ export const handleRegister = async (
     // Check if the response has a success message
     if (response.message === "User created successfully") {
       setModalMessage(
-        "Sign Up Successfully. Click Ok to navigate to the Login Screen."
+        "Verification email has been sent to your Gmail account. Please verify your account by entering the 6-digit code."
       );
       setModalType("success");
       if (!modalAlreadyShown) {
@@ -83,7 +101,8 @@ export const handleLogin = async (
 
   try {
     setLoading(true);
-    const response = await axiosInstance.post("/loggering", formData, {
+    // post http:localhost:5000/login => post,put,delete, get, patch
+    const response = await axiosInstance.post("/login", formData, {
       headers: {
         "Content-Type": "application/json",
       },

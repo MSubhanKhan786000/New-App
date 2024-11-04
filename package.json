@@ -25,6 +25,7 @@
     "formik": "^2.4.6",
     "js-cookie": "^2.2.1",
     "mdb-react-ui-kit": "^9.0.0",
+    "mui-one-time-password-input": "^2.0.3",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
     "react-dom": "^18.3.1",

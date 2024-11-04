@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Colors from "../constants/Colors";
 import { handleRegister } from "../services/auth";
 import { ROUTES } from "../constants/routes";
+import OtpVerifyModal from "../components/otpVerify"; // import OTP modal
 
 function SignUp() {
   const [validated, setValidated] = useState(false);
@@ -15,6 +16,7 @@ function SignUp() {
   const [modalMessage, setModalMessage] = useState("");
   const [modalType, setModalType] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false); // OTP modal visibility state
   const [formData, setFormData] = useState({
     fname: "",
     lname: "",
@@ -23,7 +25,7 @@ function SignUp() {
     address: "",
     password: "",
     city: "",
-    role: "user", // Default role is user
+    role: "user",
   });
   const navigate = useNavigate();
 
@@ -52,6 +54,13 @@ function SignUp() {
       );
     }
     setValidated(true);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    if (modalType === "success") {
+      setShowOtpModal(true); // Show OTP modal on successful registration
+    }
   };
 
   return (
@@ -220,12 +229,14 @@ function SignUp() {
             type={modalType}
             title={modalType === "success" ? "Success" : "Error"}
             content={modalMessage}
-            onClose={() => {
-              setShowModal(false);
-              if (modalType === "success") {
-                navigate(ROUTES.LOGIN);
-              }
-            }}
+            onClose={handleModalClose}
+          />
+        )}
+
+        {showOtpModal && (
+          <OtpVerifyModal
+            setShowOtpModal={setShowOtpModal}
+            navigate={navigate}
           />
         )}
       </div>

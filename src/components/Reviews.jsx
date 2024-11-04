@@ -31,8 +31,8 @@ function Reviews() {
   return (
     <AppContainer>
       <Wrapper>
-        <Text>With Great Outcomes.</Text>
-        <Note>Our customers have gotten offers from awesome companies.</Note>
+        <Text>Customers Feedbacks</Text>
+        <Note>Our customer values our websites and earning good with us</Note>
         <Marquee>
           <MarqueeGroup>
             {row1.map((el, index) => (

@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext"; // Import UserContext
+import { ROUTES } from "../constants/routes";
 
 function PrivateRoutes({ children, allowedRoles }) {
   const { userInfo, loading } = useContext(UserContext);
@@ -16,7 +17,7 @@ function PrivateRoutes({ children, allowedRoles }) {
     allowedRoles.includes(userInfo.role.toUpperCase());
 
   if (!userInfo) {
-    return <Navigate to="/login" />;
+    return <Navigate to={ROUTES.LOGIN} />;
   }
 
   if (!userHasRequireRole) {
