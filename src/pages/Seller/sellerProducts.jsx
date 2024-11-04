@@ -10,6 +10,7 @@ function ProductGrid() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+console.log(products);
 
   const navigate = useNavigate();
   const productCart = () => {
@@ -100,7 +101,7 @@ function ProductGrid() {
                     {product.approvalStatus === "pending" && (
                       <Chip label="Pending Approval" color="warning" />
                     )}
-                    {product.approvalStatus === "approved" && (
+                    {product.approvalStatus === "completed" && (
                       <Chip label="Approved" color="success" />
                     )}
                     {product.approvalStatus === "rejected" && (
