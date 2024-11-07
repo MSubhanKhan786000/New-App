@@ -18,7 +18,7 @@ const Home = () => {
   console.log(userInfo?.role, "user role from home");
 
   // State to keep track of visible products count
-  const [visibleCount, setVisibleCount] = useState(5);
+  const [visibleCount, setVisibleCount] = useState(12);
 
   // Handle loading states
   if (loading || isLoading) {
@@ -46,11 +46,11 @@ const Home = () => {
 
   // Function to handle Show More button click
   const handleShowMore = () => {
-    setVisibleCount((prevCount) => prevCount + 5);
+    setVisibleCount((prevCount) => prevCount + 4);
   };
 
   // Ensure userInfo is available before accessing role
-  if (userInfo?.role === "user") {
+  // if (userInfo?.role === "user") {
     return (
       <div>
         <Hero />
@@ -80,7 +80,7 @@ const Home = () => {
         </div>
       </div>
     );
-  } else if (userInfo?.role === "seller") {
+  // } else if (userInfo?.role === "seller") {
     console.log('Rendering seller home');
     console.log(`User role is: '${userInfo?.role}'`);
     return (
@@ -88,7 +88,7 @@ const Home = () => {
         <p style={{fontSize:"100px",fontWeight:"bold"}}>This is Seller's Home</p>
       </div>
     );
-  } else {
+  // } else {
     // Handle cases where userInfo is not available or role is unrecognized
     return (
       <div className="flex justify-center items-center h-screen">
@@ -96,6 +96,6 @@ const Home = () => {
       </div>
     );
   }
-};
+// };
 
 export default Home;

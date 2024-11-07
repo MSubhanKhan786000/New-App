@@ -17,7 +17,7 @@ function PrivateRoutes({ children, allowedRoles }) {
     allowedRoles.includes(userInfo.role.toUpperCase());
 
   if (!userInfo) {
-    return <Navigate to={ROUTES.LOGIN} />;
+    return <Navigate to={ROUTES.HOME} />;
   }
 
   if (!userHasRequireRole) {

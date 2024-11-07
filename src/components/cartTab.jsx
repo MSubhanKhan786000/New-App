@@ -16,19 +16,18 @@ export default function CartTab() {
   const navigate = useNavigate();
 
   const calculateTotal = (cartItem) => {
-    if (cartItem.buyPrice === "0") {
-      return cartItem.rentPrice * cartItem.quantity;
-    } else if (cartItem.rentPrice === "null") {
+    if (cartItem.rentPrice && cartItem.dateRange) {
+      return cartItem.rentPrice;
+    } else {
       return cartItem.buyPrice * cartItem.quantity;
     }
-    return cartItem.buyPrice * cartItem.quantity; // Default to buyPrice
   };
+  
 
   const totalPrice = cartItems.reduce((total, cartItem) => {
     return total + calculateTotal(cartItem);
   }, 0);
 
-  // Show confirmation before deleting the item
   const showDeleteConfirm = (cartItem) => {
     Modal.confirm({
       title: `Are you sure you want to delete all of ${cartItem.name} from the cart?`,
@@ -53,8 +52,16 @@ export default function CartTab() {
 
   // Show message when user tries to decrease quantity
   const handleDecreaseQuantity = (cartItem) => {
-    message.info("Quantity is fixed");
+    if (cartItem.quantity > 1) {
+      // Decrease the quantity by 1
+      dispatch(changeQuantity({ productId: cartItem.productId, quantity: cartItem.quantity - 1 }));
+      message.info(`Decreased quantity of ${cartItem.name}`);
+    } else {
+      // If quantity is 1, show delete confirmation
+      showDeleteConfirm(cartItem);
+    }
   };
+  
 
   // Show message when user tries to increase quantity
   const handleIncreaseQuantity = (cartItem) => {

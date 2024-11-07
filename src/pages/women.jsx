@@ -12,7 +12,7 @@ const Women = () => {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 2; // Show 5 products per page
+  const productsPerPage = 8; // Show 5 products per page
 
   // Centered loader spinner
   if (isLoading) {

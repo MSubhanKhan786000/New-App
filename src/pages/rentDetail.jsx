@@ -16,7 +16,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Grid2, Typography } from "@mui/material";
 import { notification, Tag } from "antd"; 
 import { addToCart } from "../store/cart";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ROUTES } from "../constants/routes";
 import { Button } from "react-bootstrap";
 
@@ -28,6 +28,10 @@ const RentDetail = () => {
   const [dateRange, setDateRange] = useState([null, null]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const cartItems = useSelector((state) => state.cart.items);
+  console.log(cartItems,"cartItems quanity");
+  
 
   useEffect(() => {
     const getdetail = async () => {
@@ -58,6 +62,7 @@ const RentDetail = () => {
     const today = new Date();
     const startDate = new Date(dateRange[0]);
     const endDate = new Date(dateRange[1]);
+  
     if (detail.quantity === 0) {
       notification.error({
         message: "Sorry",
@@ -66,6 +71,7 @@ const RentDetail = () => {
       });
       return;
     }
+  
     if (startDate < today || endDate < today) {
       notification.error({
         message: "Invalid Date",
@@ -74,28 +80,89 @@ const RentDetail = () => {
       });
       return;
     }
-
-    // Add product to cart
+  
+    const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) || 1;
+    const totalRentPrice = days * detail.rentPrice;
+  
+    // Check if the product is already in the cart with an overlapping date range
+    const isDateRangeConflict = cartItems.some((item) => {
+      if (item.productId === detail._id) {
+        const existingStart = new Date(item.dateRange[0]);
+        const existingEnd = new Date(item.dateRange[1]);
+  
+        // Check for overlapping date ranges
+        return (
+          (startDate <= existingEnd && endDate >= existingStart) // Overlap condition
+        );
+      }
+      return false;
+    });
+  
+    if (isDateRangeConflict) {
+      notification.error({
+        message: "Date Conflict",
+        description: "This product is already rented for the selected date range.",
+        placement: "topRight",
+      });
+      return;
+    }
+  
+    // Find the existing item in the cart with the exact date range
+    const existingCartItem = cartItems.find(
+      (item) =>
+        item.productId === detail._id &&
+        item.dateRange[0]?.toString() === dateRange[0]?.toString() &&
+        item.dateRange[1]?.toString() === dateRange[1]?.toString()
+    );
+  
+    if (existingCartItem) {
+      notification.error({
+        message: "Duplicate Rental",
+        description: "You can't rent the product twice for the same days.",
+        placement: "topRight",
+      });
+      return;
+    }
+  
+    const totalQuantityInCart = cartItems
+    .filter((item) => item.productId === detail._id)
+    .reduce((total, item) => total + item.quantity, 0);
+  
+    // Calculate the total quantity after this addition
+    const newTotalQuantity = totalQuantityInCart + quantity;
+  
+    // Check if adding more items exceeds available quantity
+    if (newTotalQuantity > detail.quantity) {
+      notification.error({
+        message: "Quantity Limit Reached",
+        description: `You can't add more of this product as the stock limit has been reached.`,
+        placement: "topRight",
+      });
+      return;
+    }
+  
     const cartProduct = {
-      productId: detail._id, // Correct property name for the ID
+      productId: detail._id,
       name: detail.name,
       buyPrice: detail.buyPrice,
-      rentPrice: detail.rentPrice,
+      rentPrice: totalRentPrice, // Store total rental price for selected days
       category: detail.category,
       image: detail.image,
       description: detail.description,
       quantity,
-      dateRange: dateRange, // Add date range to cart
+      dateRange: dateRange,
     };
-
-    dispatch(addToCart(cartProduct)); // Dispatch action to add to cart
+  
+    dispatch(addToCart(cartProduct));
     notification.success({
       message: "Product Added",
       description: "Product has been added to your cart.",
       placement: "topRight",
     });
-    console.log("This is product id from rent", cartProduct.productId);
+    setDateRange([null, null]);
   };
+  
+  
 
   const updatedRentPrice = detail.rentPrice * quantity;
 

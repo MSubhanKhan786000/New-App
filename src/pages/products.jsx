@@ -19,7 +19,7 @@ const Products = () => {
   const [categoryFilter, setCategoryFilter] = useState(null); // State for category
 
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 7;
+  const productsPerPage = 8;
 
   if (isLoading) {
     return (
@@ -126,7 +126,7 @@ const Products = () => {
         </div>
         <div className="w-full lg:w-3/4 p-4">
           <div className="flex justify-end mb-4">
-            <Filter onFilterChange={setFilter} /> {/* Price Filter at top right */}
+            <Filter onFilterChange={setFilter} /> 
           </div>
 
           {currentProducts.length > 0 ? (

@@ -115,16 +115,20 @@ export const handleLogin = async (
       setModalType("success");
       setShowModal(true);
 
-      setTimeout(() => {
-        navigate("/", { state: { user: response.fname } });
-        localStorage.setItem("userId", response.userId);
-      }, 2000);
+      // setTimeout(() => {
+      //   navigate("/", { state: { user: response.fname } });
+      //   localStorage.setItem("userId", response.userId);
+      // }, 2000);
+      localStorage.setItem("userId", response.userId);
+      return true;
     } else {
       setModalMessage(
         "Login failed: " + (response?.message || "Unknown error")
       );
       setModalType("error");
       setShowModal(true);
+      return false;
+
     }
   } catch (error) {
     if (error.response && error.response.data) {

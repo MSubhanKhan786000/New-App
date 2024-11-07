@@ -9,6 +9,7 @@ const ProductCart = (props) => {
   const carts = useSelector((store) => store.cart.items);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
 
   const {
     _id,
@@ -32,7 +33,7 @@ const ProductCart = (props) => {
 
     dispatch(
       addToCart({
-        _id,
+        productId: _id,
         name,
         buyPrice,
         rentPrice,
@@ -46,6 +47,11 @@ const ProductCart = (props) => {
   };
 
   const showConfirm = () => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate(ROUTES.LOGIN); 
+      return;
+    }
     const availableQuantity = quantity - cartQuantity;
 
     if (availableQuantity <= 0) {
@@ -67,6 +73,11 @@ const ProductCart = (props) => {
   };
 
   const handleRentClick = () => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      navigate(ROUTES.LOGIN); 
+      return;
+    }
     if (quantity <= 0) {
       message.error("Product is out of stock. Will be available soon.");
     } else if (!rentPrice || isNaN(rentPrice)) {
@@ -77,6 +88,12 @@ const ProductCart = (props) => {
   };
 
   const handleBuyClick = () => {
+    const userId = localStorage.getItem("userId");
+
+  if (!userId) {
+    navigate(ROUTES.LOGIN); 
+    return;
+  }
     if (quantity <= 0) {
       message.error("Product is out of stock. Will be available soon.");
     } else if (buyPrice === "0") {

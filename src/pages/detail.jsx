@@ -64,23 +64,50 @@ const Detail = () => {
       });
       return;
     }
-
+  
     if (detail && detail._id) {
       const existingProduct = cartItems.find(
         (item) => item.productId === detail._id
       );
-      if (existingProduct) {
+      const currentCartQuantity = existingProduct ? existingProduct.quantity : 0;
+      const isRental = !!detail.dateRange; // Determine if the item is being rented by checking `dateRange`
+  
+      if (isRental) {
+        // Rental condition: Check if quantity limit is reached for rental
+        if (currentCartQuantity + quantity > detail.quantity) {
+          notification.error({
+            message: "Rental Limit Reached",
+            description: `You can't add more rentals of this product as the stock limit has been reached.`,
+            placement: "topRight",
+          });
+          return;
+        }
+        
+        // Add the rental item to the cart, including dateRange
         dispatch(
           addToCart({
             productId: detail._id,
             name: detail.name,
             buyPrice: detail.buyPrice,
+            rentPrice: detail.rentPrice,
             image: detail.image,
             description: detail.description,
-            quantity: existingProduct.quantity + quantity,
+            quantity: currentCartQuantity + quantity,
+            dateRange: detail.dateRange, // Include dateRange for rentals
           })
         );
       } else {
+        // Buy condition: Check if quantity limit is reached for purchase
+        if (currentCartQuantity + quantity > detail.quantity) {
+          notification.error({
+            message: "Purchase Limit Reached",
+            description: `You can't add more of this product for purchase as the stock limit has been reached.`,
+            placement: "topRight",
+          });
+          return;
+        }
+  
+        // Add the buy item to the cart without dateRange
         dispatch(
           addToCart({
             productId: detail._id,
@@ -88,10 +115,12 @@ const Detail = () => {
             buyPrice: detail.buyPrice,
             image: detail.image,
             description: detail.description,
-            quantity: quantity,
+            quantity: currentCartQuantity + quantity,
           })
         );
       }
+  
+      // Success notification for adding item to cart
       notification.success({
         message: "Added to Cart",
         description: `${detail.name} has been added to your cart.`,
@@ -101,6 +130,8 @@ const Detail = () => {
       console.error("Product ID is missing!");
     }
   };
+  
+  
 
   const handleBack = () => {
     navigate(ROUTES.HOME);

@@ -64,6 +64,8 @@ const Header = () => {
     navigate(ROUTES.PROFILE);
   };
 
+  const userId = localStorage.getItem("userId");
+
   return (
     <Navbar expand="lg" className="bg-header-bg">
       <Container>
@@ -74,11 +76,11 @@ const Header = () => {
             style={{ maxWidth: "150px", cursor: "pointer" }}
           />
         </Navbar.Brand>
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto ml-10 space-x-4">
-            {/* Conditional rendering based on user role */}
-            {userInfo?.role === "user" ? (
+            {userInfo?.role !== "seller" ? (
               <>
                 <NavLink className="ms-2 nav-link" as={Link} to={ROUTES.HOME}>
                   Home
@@ -97,7 +99,6 @@ const Header = () => {
                 >
                   About Us
                 </NavLink>
-                
 
                 <NavDropdown title="Men" id="men-nav-dropdown">
                   <NavDropdown.Item as={Link} to={ROUTES.MEN}>
@@ -110,7 +111,7 @@ const Header = () => {
                     Mehndi
                   </NavDropdown.Item>
                   {menuItems
-                    .filter((item) => item.category === "Men") // Filter for Men category
+                    .filter((item) => item.category === "Men")
                     .map((item) => (
                       <NavDropdown.Item
                         key={item._id}
@@ -133,7 +134,7 @@ const Header = () => {
                     Mehndi
                   </NavDropdown.Item>
                   {menuItems
-                    .filter((item) => item.category === "Women") // Filter for Women category
+                    .filter((item) => item.category === "Women")
                     .map((item) => (
                       <NavDropdown.Item
                         key={item._id}
@@ -150,14 +151,14 @@ const Header = () => {
                   className="text-white ml-9 no-wrap"
                   style={{ whiteSpace: "nowrap", padding: "-2px 8px" }}
                   onClick={() => {
-                    navigate(ROUTES.SIGNUP); 
+                    navigate(ROUTES.SIGNUP);
                     localStorage.removeItem("userId");
                   }}
                 >
                   Become Seller
                 </Button>
               </>
-            ) : userInfo?.role === "seller" ? (
+            ) : (
               <>
                 <NavLink
                   className="ms-2 nav-link"
@@ -196,11 +197,11 @@ const Header = () => {
                   Earn With Us
                 </Button>
               </>
-            ) : null}
+            )}
           </Nav>
-          <Nav className="d-flex align-items-center gap-3">
-            {/* Cart and Profile Section */}
-            {userInfo?.role === "user" && (
+
+          {userId ? (
+            <Nav className="d-flex align-items-center gap-3">
               <Nav className="d-flex align-items-center gap-3">
                 <div
                   onClick={handleCartClick}
@@ -226,17 +227,17 @@ const Header = () => {
                   </span>
                 </div>
               </Nav>
-            )}
-            <img
-              src={profileIcon}
-              alt="Profile"
-              style={{ width: 30, height: 30 }}
-              onClick={handleProfile}
-            />
-            <Nav.Link onClick={handleLogout} style={{ marginLeft: "-10px" }}>
-              <FiLogOut color="black" />
-            </Nav.Link>
-          </Nav>
+              <img
+                src={profileIcon}
+                alt="Profile"
+                style={{ width: 30, height: 30 }}
+                onClick={handleProfile}
+              />
+              <Nav.Link onClick={handleLogout} style={{ marginLeft: "-10px" }}>
+                <FiLogOut color="black" />
+              </Nav.Link>
+            </Nav>
+          ) : null}
         </Navbar.Collapse>
       </Container>
     </Navbar>

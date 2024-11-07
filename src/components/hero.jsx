@@ -14,8 +14,7 @@ function Hero() {
         {/* div for text on left */}
         <div
           className="
-         flex flex-col justify-center items-center text-left md:text-left px-10 py-20 md:py-0 md-px-0 md:items-start
-        md:pr-24 space-y-2"
+         flex flex-col justify-center items-center text-left md:text-left px-10  md:py-0 md-px-0 md:items-start space-y-2"
         >
           <h3 className="text-white xl:text-4xl font-bold">
             <p>Wedding Dresses for Rent and Buy</p>

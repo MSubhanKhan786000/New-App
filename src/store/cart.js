@@ -15,12 +15,13 @@ const cartSlice = createSlice({
       const product = action.payload;
 
       const existingItemIndex = state.items.findIndex(
-        (item) => item.productId === product._id // Change from product._id to product.productId
+        (item) => item.productId === product.productId
       );
 
       if (existingItemIndex >= 0) {
         state.items[existingItemIndex].quantity += product.quantity;
         state.items[existingItemIndex].dateRange = product.dateRange;
+        state.items[existingItemIndex].rentPrice = product.rentPrice; 
       } else {
         state.items.push(product);
       }
@@ -36,7 +37,6 @@ const cartSlice = createSlice({
       if (quantity > 0) {
         state.items[existingItemIndex].quantity = quantity;
       } else {
-        // Remove the product from the cart when quantity is 0
         state.items = state.items.filter(
           (item) => item.productId !== productId
         );

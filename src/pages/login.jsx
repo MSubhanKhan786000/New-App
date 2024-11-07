@@ -28,7 +28,7 @@ function Login() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -38,7 +38,7 @@ function Login() {
       setShowModal(true);
     } else {
       event.preventDefault();
-      handleLogin(
+      let res =await handleLogin(
         formData,
         setLoading,
         setModalMessage,
@@ -46,6 +46,12 @@ function Login() {
         setShowModal,
         navigate
       );
+
+      if(res == true){
+        navigate("/");
+        window.location.reload();
+
+      }
     }
 
     setValidated(true);

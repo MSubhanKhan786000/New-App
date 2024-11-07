@@ -23,7 +23,6 @@ export const UserContextProvider = ({ children }) => {
   useEffect(() => {
     fetchUserInfo();
   }, []);
-
   return (
     <UserContext.Provider value={{ userInfo, loading }}>
       {children}
